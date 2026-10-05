@@ -29,6 +29,14 @@ record that `video-scene` turns into a spec, where every value is tagged
 
 ## Workflow
 
+### 0. Mode
+
+If the request carries `--no-questions` or `--not-questions` (or says "no
+questions", "sem perguntas", "don't ask", "just generate"), run in
+**no-questions mode**: do steps 1–2, then skip steps 3–6 and resolve every
+CRITICAL dimension with the table in *No-questions mode* below. Never send a
+question in this mode.
+
 ### 1. Extract
 
 Go through the dimension table below. For each dimension, mark it:
@@ -102,6 +110,28 @@ city at once).
 Only if an answer creates a new CRITICAL gap (e.g. "make it part of my other
 project" → continuity unclear). Never more than two rounds in total.
 
+## No-questions mode
+
+Each CRITICAL dimension gets the choice that preserves the source best and
+adds the least. Every auto-decision is tagged `inferred` (never `user`) and
+listed in the record under `auto_decisions` so the final report can show it.
+
+| CRITICAL dimension | Automatic choice |
+|--------------------|------------------|
+| Look / realism | `presets.style: cinematic` (photorealistic) — unless the project defines a style preset |
+| Camera viewpoint & movement | the option that would have been marked *(recommended)* |
+| Subject appearance | a reusable character designed by `video-character` |
+| Continuity unclear | standalone scene (no `previous_scene`) |
+| Input mode — reference mentioned but no file given | `text-to-video`, plus a warning |
+| Shot plan does not fit the clip (screenplay) | **split** into shots |
+| Non-visual statement that needs a representation (screenplay) | subtle performance (close-up feel, change of expression) if the character is on screen in that beat; otherwise **omit**. Never a flashback, memory object, voice-over or any added event. |
+| Ambiguous character match (screenplay) | the file whose id equals the normalized name; if none, a new character with a suffixed id (`maria-2`) and a warning |
+| Screenplay trait contradicts an existing character file | keep the file (continuity), warn with the screenplay's wording |
+
+The only case that still stops is input that cannot produce a video at all
+(no subject and no action, or an empty excerpt). That is reported as an
+error with an example, not asked as a question.
+
 ## Rules
 
 1. Never ask about a STATED dimension, even to "confirm".
@@ -134,6 +164,8 @@ values:                # values in English; evidence quotes stay in the original
   - { path: format.duration_s, value: 5, source: default }
 characters_needed: [ { subject: rider, reason: "main human subject" } ]
 open_questions: []
+auto_decisions:        # only in no-questions mode
+  - { path: presets.style, value: cinematic, reason: "no style stated" }
 ```
 
 ## Failure handling

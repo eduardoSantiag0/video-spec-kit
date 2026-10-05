@@ -134,7 +134,8 @@ Só isso. Sem pacotes, sem build. Extras opcionais:
    Escreva em qualquer idioma — o agente faz as perguntas no seu idioma e
    mantém as specs e os prompts em inglês.
 
-3. Responda às (poucas) perguntas. O agente grava seus arquivos em
+3. Responda às (poucas) perguntas — ou adicione `--not-questions` ao comando
+   para pulá-las e deixar o kit decidir (todas as decisões são listadas no final). O agente grava seus arquivos em
    `projects/<nome>/scenes/scene-001/v001/` e mostra os prompts.
 
 4. Cole `prompts/wan.txt` (ou `ltx.txt`) na sua ferramenta de vídeo, use as
@@ -223,6 +224,24 @@ Ela decide se isso já está evidente nos outros beats, se dá para mostrar só 
 atuação sutil (registrado como suposição) ou se precisa perguntar a você como
 representar: close e mudança de expressão, flashback, objeto ligado à memória
 ou nenhuma representação explícita.
+
+Não quer perguntas? Adicione `--not-questions` (ou `--no-questions`), cole o
+trecho e tudo é gerado; o relatório lista cada decisão que o kit tomou por você
+(por exemplo, "plano de shots → dividir", "visual → cinematográfico").
+
+```
+$video-screenplay --not-questions
+INT. COZINHA - NOITE
+Maria entra lentamente na cozinha.
+…
+```
+
+Nesse modo o kit escolhe sempre a opção que menos inventa: divide em shots
+quando não cabe, usa visual cinematográfico se o roteiro não define estilo,
+mostra informações internas só com atuação sutil (nunca flashback ou evento
+novo) e, em conflitos, dá prioridade ao roteiro. Tudo fica marcado como
+`inferred`, então você continua vendo o que não foi decisão sua. Só para se o
+trecho estiver vazio ou sem nada visível.
 
 Também funciona como `$video_from_screenwright` e `$video-from-screenplay`.
 

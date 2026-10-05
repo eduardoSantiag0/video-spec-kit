@@ -28,6 +28,7 @@ the kit itself (answer those directly from `README.md`).
 | Input            | Required | Source |
 |------------------|----------|--------|
 | User message     | yes      | Text after `$video` / `/video`, or the conversation |
+| `--no-questions` / `--not-questions` | no | Ask nothing; pass the mode to `video-clarify` / `video-screenplay` and list every auto-decision in the report |
 | Existing project | no       | `projects/*/project.yaml` |
 | Kit files        | yes      | `kit/conventions.md`, `kit/defaults.yaml`, `kit/vocabulary.md` |
 
@@ -57,8 +58,9 @@ Classify the user message, first match wins:
    - create `projects/<id>/` with `project.yaml` from `templates/project.yaml`.
      Derive `<id>` from 2–3 key nouns of the idea (`tokyo-rain`). Do not ask.
    Next scene id = next free `scene-NNN`. Version = `v001`.
-2. **Clarify.** Run `.agents/skills/video-clarify/SKILL.md`. Result: a
-   clarification record (path → value → source). At most two question rounds.
+2. **Clarify.** Run `.agents/skills/video-clarify/SKILL.md` (in no-questions
+   mode when the flag is present). Result: a clarification record
+   (path → value → source). At most two question rounds; zero in no-questions mode.
 3. **Characters.** For each subject that needs a stable identity, run
    `.agents/skills/video-character/SKILL.md` (criteria are in that skill).
 4. **Scene spec.** Run `.agents/skills/video-scene/SKILL.md` →
@@ -125,6 +127,7 @@ Files
 
 You decided: <3–6 short items tagged user>
 I assumed:   <3–6 most impactful inferred/default items> — say "change <item>" to adjust
+Decided automatically: <only with --no-questions: every auto-decision>
 
 Warnings: <from shot-spec, or "none">
 

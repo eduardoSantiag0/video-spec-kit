@@ -134,7 +134,8 @@ That's it. No packages, no build step. Optional extras:
    Write in any language — the agent asks its questions in your language and
    keeps the specs and prompts in English.
 
-3. Answer the (few) questions. The agent writes your files to
+3. Answer the (few) questions — or add `--not-questions` to the command to skip
+   them and let the kit decide (every decision is listed afterwards). The agent writes your files to
    `projects/<name>/scenes/scene-001/v001/` and shows the prompts.
 
 4. Paste `prompts/wan.txt` (or `ltx.txt`) into your video tool, use the
@@ -208,6 +209,10 @@ pick "split" — writes three ordinary scenes (enter into the fridge light ·
 insert of the broken glass · call, noise, freeze) with Wan and LTX prompts.
 `"João?"` is kept verbatim but not voiced, the noise is only a sound cue, and
 nobody appears in the hallway.
+
+Don't want questions? Add `--not-questions` (or `--no-questions`), paste the
+excerpt, and everything is generated; the report lists each decision the kit
+made for you (e.g. "shot plan → split", "look → cinematic").
 
 Also available as `$video_from_screenwright` and `$video-from-screenplay`.
 Guide: [docs/screenplay.md](docs/screenplay.md) · examples:

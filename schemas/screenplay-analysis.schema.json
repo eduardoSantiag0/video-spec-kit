@@ -46,7 +46,7 @@
     "options": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Options the user passed (--model, --duration, --style, --ref).",
+      "description": "Options the user passed (--model, --duration, --style, --ref, --no-questions / --not-questions).",
       "properties": {
         "adapters": {
           "type": "array",
@@ -66,6 +66,10 @@
           "items": {
             "$ref": "common.schema.json#/$defs/referenceImage"
           }
+        },
+        "no_questions": {
+          "type": "boolean",
+          "description": "true when the user passed --no-questions / --not-questions: nothing was asked, every decision is automatic."
         }
       }
     },
@@ -437,8 +441,10 @@
               "assumed",
               "user-confirmed",
               "user-chosen",
-              "pending"
-            ]
+              "pending",
+              "auto"
+            ],
+            "description": "auto = decided without asking (no-questions mode)."
           }
         }
       }

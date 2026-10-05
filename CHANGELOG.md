@@ -18,6 +18,10 @@ versions follow [Semantic Versioning](https://semver.org/).
 - Alias support in `tools/sync_agent_wrappers.py`; screenplay checks in `tools/validate.py`.
 - Examples `screenplay-rooftop` (single shot) and `screenplay-kitchen` (PT-BR, three shots).
 - `docs/screenplay.md`, `README.pt-BR.md`.
+- `--no-questions` / `--not-questions` flag for `video` and `video-screenplay`:
+  nothing is asked; `video-clarify` → *No-questions mode* picks the least-inventive
+  option, tags it `inferred` and lists it under *Decided automatically*;
+  `video-shot` auto-resolves blocking conflicts by source priority.
 
 ### Changed
 - `audio.dialogue` is now a list of `{character, text, ...}` lines (was a string).

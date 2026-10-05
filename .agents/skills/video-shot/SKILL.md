@@ -84,6 +84,13 @@ that is how overrides work.
 For each conflict write `{id, fields, description, blocking, resolution}`.
 Blocking + unresolved → `resolution: pending user decision`.
 
+**No-questions mode** (`--no-questions` / `--not-questions` on the request):
+never ask. Resolve each blocking conflict by source priority
+`screenplay` > `user` > `inferred` > `default` (same source: the latest
+statement wins); C16 → restore the screenplay order; C17 → remove the
+offscreen character from the subjects. Write
+`resolution: "auto: <what was kept and why>"` and copy it into `warnings`.
+
 ### 4. Complexity and risk
 
 Count subjects, simultaneous actions, camera moves, beats. Risk is `high` if
@@ -114,7 +121,9 @@ placeholders).
 
 ## Rules
 
-1. Never change a `user` value to resolve a conflict. Ask.
+1. Never change a `user` value to resolve a conflict. Ask — except in
+   no-questions mode, where the source priority above decides and the
+   decision is reported.
 2. The shot-spec is derived: always regenerate it from the spec; never patch
    it by hand to change the video.
 3. One primary camera movement per shot.

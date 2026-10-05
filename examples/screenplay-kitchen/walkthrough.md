@@ -118,3 +118,32 @@ Frames per run: Wan 81 (5 s) / 49 (3 s) at 16 fps; LTX 121 (5 s) / 73 (3 s) at 2
 
 Generate the three shots, cut them in order, add the dialogue and the noise in
 editing, then review any shot with `$video-review` — they are ordinary scenes.
+
+## 9. Variant: the same excerpt with `--not-questions`
+
+> **User:**
+> ```
+> $video-screenplay --duration 5 --not-questions
+>
+> INT. COZINHA - NOITE
+> …(same excerpt)…
+> ```
+
+Nothing is asked. The two questions from step 4 are resolved by
+`video-clarify` → *No-questions mode*:
+
+| Question in step 4 | Automatic choice | Recorded as |
+|--------------------|------------------|-------------|
+| Shot plan (5 visual beats vs 5 s) | split into 3 shots | `shot_breakdown.decision: "auto: split (recommended)"` |
+| Look | `presets.style: cinematic` | provenance `inferred` (not `user`) |
+
+The files are the same as in this example, with three differences:
+`options.no_questions: true`, the two decisions above recorded as automatic,
+and `presets.style` listed under `inferred` instead of `user`. The report
+ends with:
+
+> **Decidido automaticamente (--not-questions):**
+> - plano de shots → dividir em 3 shots (5 beats visuais não cabem em 5 s)
+> - visual → fotorrealista cinematográfico (o roteiro não define estilo)
+>
+> Para mudar: "mude o visual para noir" — as versões ainda são rascunho e são atualizadas no lugar.

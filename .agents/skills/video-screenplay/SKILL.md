@@ -1,6 +1,6 @@
 ---
 name: video-screenplay
-description: Turns a screenplay excerpt (sluglines, action, dialogue, in any language) into a faithful visual analysis, a shot breakdown that respects the clip duration, the standard scene specs, and Wan/LTX prompts — separating what is visible from internal states, dialogue and sound, and never inventing story. Use when the user pastes a screenplay or script excerpt, or types $video-screenplay, $video_from_screenwright or $video-from-screenplay.
+description: Turns a screenplay excerpt (sluglines, action, dialogue, in any language) — optionally with --no-questions / --not-questions to generate everything without asking — into a faithful visual analysis, a shot breakdown that respects the clip duration, the standard scene specs, and Wan/LTX prompts — separating what is visible from internal states, dialogue and sound, and never inventing story. Use when the user pastes a screenplay or script excerpt, or types $video-screenplay, $video_from_screenwright or $video-from-screenplay.
 metadata:
   aliases: video_from_screenwright, video-from-screenplay
 ---
@@ -43,8 +43,11 @@ screenplay itself.
 | `--duration <seconds>` | no | Length of **one generation** (default: `kit/defaults.yaml → format.duration_s`) |
 | `--style <preset-id or words>` | no | Look (e.g. `cinematic`, "black-and-white noir") |
 | `--ref <path>` | no | Character or style reference image (repeatable) |
+| `--no-questions` / `--not-questions` | no | Ask nothing: every decision is made automatically (see `video-clarify` → *No-questions mode*) and listed in the report |
 
-Natural-language equivalents work too ("for LTX, 5 seconds, noir look").
+Natural-language equivalents work too ("for LTX, 5 seconds, noir look",
+"sem perguntas"). Flags may appear on the command line, on their own line
+before the excerpt, or after it; they are never part of the excerpt.
 
 Also read: `kit/conventions.md`, `kit/defaults.yaml`, `kit/vocabulary.md`,
 existing `projects/<id>/characters/*.yaml`, `templates/source-screenplay.md`,
@@ -202,6 +205,12 @@ beat's time.
 
 ### 7. Clarify (one message, ≤ 4 questions)
 
+With `--no-questions` / `--not-questions`: ask nothing. Resolve the items
+below with `video-clarify` → *No-questions mode* (split when it does not fit;
+subtle performance or omit for non-visual lines; `cinematic` when no look is
+given), record them as `status: auto` / `decision: "auto: …"`, and go
+straight to step 8. Otherwise:
+
 Run the policy of `video-clarify` with a pre-filled record: everything the
 screenplay states is STATED (source `screenplay`) and is **never asked**
 (location, interior/exterior, time, who is present, actions, dialogue).
@@ -268,6 +277,7 @@ Shots (<clip_duration_s> s each max):
 
 I assumed: <character design, camera, lighting, duration if default>
 Warnings: <from shot-specs>
+Decided automatically (--no-questions only): <each auto-decision + how to change it>
 Prompts: scenes/scene-NNN/v001/prompts/<adapter>.txt for each shot
 Next: generate shot by shot; review with "$video-review" on each scene.
 ```
@@ -321,6 +331,8 @@ projects/<project-id>/
 | User wants all beats in one short clip | Explain the budget, offer reduce/lengthen; if they insist, compile and record the risk in `warnings`. |
 | Excerpt mostly non-visual (inner monologue) | Report it; ask how to represent the core idea before writing any spec. |
 | Requested adapter missing | List `adapters/*/`; compile the available ones. |
+| `--no-questions` and the excerpt is empty or has no visible action | Stop with an error and a one-line example — the only stop in that mode. |
+| `--no-questions` and the user later disagrees with an auto-decision | The versions are drafts: change the spec in place (tag `user`) and recompile. |
 
 ## Examples
 
@@ -335,6 +347,18 @@ Elena has waited all winter for this morning.
 
 2 visual beats, ~5 s → 1 shot. The last line is backstory → `visible-behavior`
 (a quiet, content expression), listed as an assumption. One question (look).
+
+**No questions** — paste and generate:
+
+```
+$video-screenplay --not-questions
+INT. SUBWAY STATION - NIGHT
+Ana runs down the empty platform. ...
+```
+
+Nothing is asked; the report ends with a *Decided automatically* list
+(style → cinematic, shot plan → split, ...). See the last section of
+`examples/screenplay-kitchen/walkthrough.md`.
 
 **Multi-shot** — `examples/screenplay-kitchen/` (PT-BR, `--duration 5`):
 

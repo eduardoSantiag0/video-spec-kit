@@ -42,10 +42,18 @@ and comes back for the next action. The other skills exist for fine control.
 | `$video-prompt wan` | Compile for one adapter (or all, without argument). |
 | `$video-review "<what you saw>"` | Diagnose a generation. |
 | `$video-iterate "<change>"` | New version with that change. |
-| `$video-screenplay [--model] [--duration]` + excerpt | Screenplay excerpt → analysis → shots → specs → prompts. Aliases: `$video_from_screenwright`, `$video-from-screenplay`. See [screenplay.md](screenplay.md). |
+| `$video-screenplay [--model] [--duration] [--no-questions]` + excerpt | Screenplay excerpt → analysis → shots → specs → prompts. Aliases: `$video_from_screenwright`, `$video-from-screenplay`. See [screenplay.md](screenplay.md). |
 
 Agents that use `/` instead of `$` (Claude Code, Gemini CLI): `/video`,
 `/video-prompt wan`, etc. See [agent-support.md](agent-support.md).
+
+## Generate without questions
+
+Add `--no-questions` (alias `--not-questions`) to `$video` or
+`$video-screenplay`. Nothing is asked: each CRITICAL decision gets the
+recommended, least-inventive choice (`video-clarify` → *No-questions mode*),
+is tagged `inferred`, and appears under *Decided automatically* in the report.
+The result is a draft, so you can still say "change X" afterwards.
 
 ## Draft vs frozen versions
 

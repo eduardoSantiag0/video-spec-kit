@@ -5,9 +5,27 @@ specs and model prompts. It is for short films, commercials, animation, music
 videos and narrative scenes — any text written as a script.
 
 ```
-$video-screenplay [--model wan|ltx|all] [--duration <s>] [--style <look>] [--ref <image>]
+$video-screenplay [--model wan|ltx|all] [--duration <s>] [--style <look>] [--ref <image>] [--no-questions]
 <paste the excerpt>
 ```
+
+**Just paste and generate:** add `--no-questions` (or `--not-questions`) and
+nothing is asked — every decision is made automatically and listed at the end:
+
+```
+$video-screenplay --not-questions
+INT. COZINHA - NOITE
+Maria entra lentamente na cozinha.
+...
+```
+
+Automatic choices (from `video-clarify` → *No-questions mode*): shot plan →
+split · missing look → `cinematic` · non-visual line → subtle performance, or
+omitted when no one is on screen (never a flashback or an added event) ·
+ambiguous character → exact-id match or a new suffixed character · blocking
+conflicts → the screenplay wins. All are tagged `inferred`, so you can still
+see what you didn't decide. The only stop is an empty excerpt or one with
+nothing visible.
 
 Aliases: `$video_from_screenwright`, `$video-from-screenplay`
 (Claude Code / Gemini CLI: `/video-screenplay`, `/video_from_screenwright`, `/video-from-screenplay`).

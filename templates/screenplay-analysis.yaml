@@ -11,6 +11,7 @@ format_detected: <screenplay | prose | mixed>
 options:                          # omit when the user passed none
   adapters: [<adapter>]
   duration_s: <seconds>
+  no_questions: <true when --no-questions / --not-questions>
 
 scene_headings:
   - raw: "<slugline as written>"
@@ -58,7 +59,7 @@ non_visual:
     kind: <internal-state | memory | backstory | intention | abstract | offscreen-knowledge>
     handling: <already-evident | visible-behavior | ask | omit>
     representation: <visible representation, English>
-    status: <assumed | user-confirmed | user-chosen | pending>
+    status: <assumed | user-confirmed | user-chosen | pending | auto>
 
 mood: <mood>
 
@@ -72,7 +73,7 @@ shot_breakdown:
   fits_single_generation: <bool>
   warning: <only when it does not fit>
   options_offered: [<split ...>, <reduce ...>, <lengthen ...>]
-  decision: <what the user chose, or "fits — single shot">
+  decision: <what the user chose, "auto: split (recommended)" in no-questions mode, or "fits — single shot">
   shots:
     - { shot: 1, beats: [1, 2], scene_id: scene-001, duration_s: <s>, summary: <one line>, camera_suggestion: <neutral coverage> }
 
