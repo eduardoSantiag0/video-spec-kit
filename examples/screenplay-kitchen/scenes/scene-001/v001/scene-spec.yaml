@@ -1,0 +1,134 @@
+spec_version: 1
+id: scene-001
+project: screenplay-kitchen
+version: v001
+title: Into the refrigerator light
+idea: |
+  INT. COZINHA - NOITE
+  Maria entra lentamente na cozinha.
+  A luz da geladeira aberta ilumina seu rosto.
+idea_language: pt-BR
+source:
+  type: screenplay
+  excerpt: excerpt-001
+  shot: 1
+  beats: [1, 2]
+intent: Unease builds as Maria walks into a dark kitchen lit only by an open refrigerator.
+
+presets:
+  style: cinematic
+
+format:
+  duration_s: 5
+  aspect_ratio: "16:9"
+  fps: 24
+  input_mode: text-to-video
+
+subjects:
+  - id: maria
+    character_id: maria
+    action: slowly enters the dark kitchen and steps into the light of the open refrigerator
+    expression: cautious
+    position: starts in the doorway in the background, walks toward camera and stops center frame
+
+environment:
+  location: a kitchen
+  interior_exterior: interior
+  era: present day
+  time_of_day: night
+  atmosphere: silent and still, deep shadows
+  background_elements:
+    - an open refrigerator at the right edge of frame, its door ajar
+    - kitchen counters and cabinets in shadow
+    - a dark doorway to the hallway
+
+camera:
+  shot_size: medium
+  angle: eye-level
+  lens: 35mm
+  movement: static
+  movement_detail: camera completely still inside the kitchen; she walks toward it into the light
+  framing: doorway in the background, Maria ending center frame from the waist up
+  depth_of_field: moderate
+  focus_target: Maria
+
+lighting:
+  type: light from the open refrigerator
+  direction: low, from the right side of frame
+  quality: hard, narrow pool of light
+  contrast: high
+  color_temperature: cool
+  notes: the rest of the kitchen stays dark
+
+motion:
+  subject_motion: slow, careful steps
+  background_motion: none — the kitchen is still
+  pace: calm
+
+timeline:
+  first_frame: The dark kitchen, a pool of cold light from the open refrigerator on the floor at the right; Maria stands in the dark doorway in the background.
+  beats:
+    - start_s: 0
+      end_s: 2.5
+      description: Maria slowly enters the dark kitchen.
+    - start_s: 2.5
+      end_s: 5
+      description: The light from the open refrigerator illuminates her face.
+  last_frame: Maria in a medium shot, her face lit by the cold refrigerator light, the rest of the kitchen dark.
+
+constraints:
+  must_include: [an open refrigerator, its light on her face]
+  must_not_include: [other people, a lamp or ceiling light turned on]
+
+continuity:
+  next_scene: scene-002
+  must_remain_consistent: [refrigerator light as the only light source, Maria's locked traits, night]
+
+provenance:
+  screenplay:
+    - subjects[0].action
+    - environment.location
+    - environment.interior_exterior
+    - environment.time_of_day
+    - lighting.type
+    - motion.subject_motion
+    - timeline.beats[0].description
+    - timeline.beats[1].description
+    - constraints.must_include
+  user:
+    - presets.style
+  inferred:
+    - title
+    - intent
+    - subjects[0].id
+    - subjects[0].character_id
+    - subjects[0].expression
+    - subjects[0].position
+    - environment.atmosphere
+    - environment.background_elements
+    - camera.movement_detail
+    - camera.framing
+    - camera.focus_target
+    - lighting.direction
+    - lighting.quality
+    - lighting.contrast
+    - lighting.color_temperature
+    - lighting.notes
+    - motion.background_motion
+    - motion.pace
+    - timeline.first_frame
+    - timeline.beats[0].start_s
+    - timeline.beats[0].end_s
+    - timeline.beats[1].start_s
+    - timeline.beats[1].end_s
+    - timeline.last_frame
+    - constraints.must_not_include
+    - continuity
+  default:
+    - format
+    - environment.era
+    - camera.shot_size
+    - camera.angle
+    - camera.lens
+    - camera.movement
+    - camera.depth_of_field

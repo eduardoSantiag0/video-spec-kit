@@ -55,6 +55,10 @@ continuity points for neighbouring scenes.
 
 ## Rules
 
+0. **Given beats.** If the spec has `source.type: screenplay`, the beats are
+   fixed by the screenplay: do not add, drop, merge, rephrase the action of,
+   or reorder them. Only set `start_s`/`end_s` and design the first/last
+   frames. Sound and dialogue in the shot go in the Notes column at their time.
 1. Never exceed the beat budget.
 2. No cuts inside a scene. Never write "cut to", "meanwhile", "later".
 3. First and last frames are images, not actions: describe states.

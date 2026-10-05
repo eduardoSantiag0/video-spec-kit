@@ -35,7 +35,9 @@ agent chose.
 2. **Header.** `spec_version: 1`, `id`, `project`, `version`, `title`
    (≤ 6 words, English), `idea` (verbatim, original language),
    `idea_language`, `intent` (one English sentence about what the viewer
-   should feel; `user` if stated, else `inferred`).
+   should feel; `user` if stated, else `inferred`). Screenplay-derived scenes
+   also get `source` (`excerpt`, `shot`, `beats`) and `idea` = the excerpt lines
+   this shot covers.
 3. **Presets.** Reference a preset when the user named a matching look
    (`user`) or when one clearly fits the stated setting (`inferred`; e.g.
    neon-lit city at night → `lighting: neon-night`). Then add
@@ -63,9 +65,13 @@ agent chose.
    `must_not_include`: user exclusions, plus intrusions that are likely for
    this setting and would break the intent (e.g. other cyclists in a "lonely
    ride") → `inferred`. Do not add generic quality negatives — adapters do.
-10. **Timeline.** Leave out; `video-storyboard` writes it.
-11. **Provenance.** List every explicit leaf path in exactly one group. A
-    section name may stand for all its fields when they share one source.
+10. **Timeline.** Leave out; `video-storyboard` writes it. Exception: for
+    screenplay-derived scenes, write the shot's beats (descriptions from
+    `screenplay-analysis.yaml → beats[].visual`, provenance `screenplay`) and
+    let `video-storyboard` time them.
+11. **Provenance.** List every explicit leaf path in exactly one group
+    (`screenplay`, `user`, `inferred`, `default`). A section name may stand
+    for all its fields when they share one source.
 12. **Self-check** before saving:
     - all required fields present (`schemas/scene.schema.json`);
     - enum fields use `kit/vocabulary.md` values;

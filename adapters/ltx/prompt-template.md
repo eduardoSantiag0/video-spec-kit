@@ -19,7 +19,7 @@ paragraph in `prompts/ltx.txt` (no slot names, no line breaks, no markdown).
 | `LIGHTING_AND_COLOR` | lighting.*, style.color_grade                         | P2   | Sources first, then color. |
 | `CHANGE_OVER_TIME`   | timeline.beats[1..]                                   | P2   | "As ..., ..." in order. Omit if one beat. |
 | `STYLE`              | style.realism, visual_style, texture                  | P3   | Short closing clause: "The scene looks like {style}." |
-| `AUDIO`              | audio.*                                               | P3   | Only if the chosen checkpoint supports audio (LTX-2). |
+| `AUDIO`              | audio.*                                               | P3   | Only if `audio.generate: true` and the checkpoint supports audio (LTX-2). Dialogue quoted verbatim, original language. |
 
 ## Negative prompt (`prompts/ltx.negative.txt`)
 

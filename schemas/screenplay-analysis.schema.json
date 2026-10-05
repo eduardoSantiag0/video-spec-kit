@@ -1,0 +1,575 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Screenplay Analysis",
+  "description": "screenplay/<excerpt-id>/screenplay-analysis.yaml — parse + visual extraction + beats + shot breakdown of one screenplay excerpt. Intermediate representation between the raw screenplay and the scene specs. Produced by video-screenplay.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_version",
+    "id",
+    "project",
+    "source_file",
+    "language",
+    "scene_headings",
+    "characters",
+    "beats",
+    "non_visual",
+    "shot_breakdown",
+    "provenance"
+  ],
+  "properties": {
+    "spec_version": {
+      "$ref": "common.schema.json#/$defs/specVersion"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^excerpt-[0-9]{3}$"
+    },
+    "project": {
+      "$ref": "common.schema.json#/$defs/kebabId"
+    },
+    "source_file": {
+      "const": "source-screenplay.md"
+    },
+    "language": {
+      "type": "string",
+      "description": "BCP 47 language of the excerpt, e.g. 'pt-BR'."
+    },
+    "format_detected": {
+      "enum": [
+        "screenplay",
+        "prose",
+        "mixed"
+      ],
+      "description": "screenplay = sluglines/character cues found; prose = plain narrative text."
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Options the user passed (--model, --duration, --style, --ref).",
+      "properties": {
+        "adapters": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/kebabId"
+          }
+        },
+        "duration_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "style": {
+          "type": "string"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/referenceImage"
+          }
+        }
+      }
+    },
+    "scene_headings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "raw"
+        ],
+        "properties": {
+          "raw": {
+            "type": "string",
+            "description": "Slugline exactly as written."
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "interior_exterior": {
+            "$ref": "common.schema.json#/$defs/interiorExterior"
+          },
+          "location": {
+            "type": "string",
+            "description": "English, normalized."
+          },
+          "location_original": {
+            "type": "string"
+          },
+          "time_of_day": {
+            "type": "string",
+            "description": "English, normalized."
+          },
+          "time_original": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "characters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "presence"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Proper name as written (never translated)."
+          },
+          "character_id": {
+            "$ref": "common.schema.json#/$defs/kebabId"
+          },
+          "presence": {
+            "enum": [
+              "on-screen",
+              "offscreen",
+              "mentioned"
+            ],
+            "description": "offscreen = heard (V.O./O.S.); mentioned = named only. Only on-screen characters are rendered."
+          },
+          "match": {
+            "enum": [
+              "existing",
+              "new",
+              "ambiguous",
+              "none"
+            ],
+            "description": "Result of matching against characters/*.yaml. 'none' for characters that are not rendered."
+          },
+          "described_in_screenplay": {
+            "type": "string",
+            "description": "Appearance details stated in the excerpt, English."
+          },
+          "first_line": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "objects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "weight"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "original": {
+            "type": "string"
+          },
+          "weight": {
+            "enum": [
+              "key",
+              "supporting"
+            ],
+            "description": "key = narratively relevant; must appear in the shot that covers its beat."
+          },
+          "implied": {
+            "type": "boolean",
+            "description": "Not written, but required by an action (e.g. a watering can for 'waters')."
+          }
+        }
+      }
+    },
+    "beats": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Dramatic/visual beats in screenplay order. Never reordered.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "original",
+          "visual",
+          "est_duration_s"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "source_lines": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "type": {
+            "enum": [
+              "action",
+              "reveal",
+              "reaction",
+              "dialogue",
+              "sound",
+              "description"
+            ]
+          },
+          "original": {
+            "type": "string",
+            "description": "Source text, verbatim."
+          },
+          "visual": {
+            "type": "string",
+            "description": "What is visible, in English. Empty string for sound-only beats."
+          },
+          "characters": {
+            "type": "array",
+            "items": {
+              "$ref": "common.schema.json#/$defs/kebabId"
+            }
+          },
+          "weight": {
+            "enum": [
+              "key",
+              "minor"
+            ]
+          },
+          "est_duration_s": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "dialogue": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "beat",
+          "character",
+          "text"
+        ],
+        "description": "A spoken line, verbatim in the original language (same fields as common dialogueLine plus beat and visual_consequence).",
+        "properties": {
+          "character": {
+            "type": "string",
+            "description": "Name as written in the source."
+          },
+          "character_id": {
+            "$ref": "common.schema.json#/$defs/kebabId"
+          },
+          "text": {
+            "type": "string",
+            "description": "Exact words, original language. Never translated."
+          },
+          "parenthetical": {
+            "type": "string"
+          },
+          "on_screen": {
+            "type": "boolean",
+            "description": "true if the speaker is visible while speaking."
+          },
+          "beat": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "visual_consequence": {
+            "type": "string",
+            "description": "What the speaker visibly does, English (e.g. 'calls out toward the hallway')."
+          }
+        }
+      }
+    },
+    "sound_cues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "beat",
+          "original",
+          "cue"
+        ],
+        "properties": {
+          "beat": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "original": {
+            "type": "string"
+          },
+          "cue": {
+            "type": "string",
+            "description": "English description of the sound. Never rendered as an image."
+          },
+          "affects": {
+            "type": "string",
+            "description": "Reaction, timing, gaze or blocking it motivates, if the screenplay supports it."
+          }
+        }
+      }
+    },
+    "camera_hints": {
+      "type": "array",
+      "description": "Camera directions written in the screenplay (CLOSE ON, POV, ANGLE ON, WE SEE...). Become `screenplay` provenance.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "original",
+          "meaning"
+        ],
+        "properties": {
+          "line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "original": {
+            "type": "string"
+          },
+          "meaning": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "transitions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "original"
+        ],
+        "properties": {
+          "line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "original": {
+            "type": "string"
+          },
+          "after_beat": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "on_screen_text": {
+      "type": "array",
+      "description": "Text that must be visible inside the image (signs, notes). Kept in the original language — never translated.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "text",
+          "where"
+        ],
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "where": {
+            "type": "string"
+          },
+          "beat": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "non_visual": {
+      "type": "array",
+      "description": "Statements that cannot be filmed literally (thoughts, memories, backstory, abstract states).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "original",
+          "kind",
+          "handling",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^NV[0-9]+$"
+          },
+          "beat": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "original": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "internal-state",
+              "memory",
+              "backstory",
+              "intention",
+              "abstract",
+              "offscreen-knowledge"
+            ]
+          },
+          "handling": {
+            "enum": [
+              "already-evident",
+              "visible-behavior",
+              "ask",
+              "omit"
+            ]
+          },
+          "representation": {
+            "type": "string",
+            "description": "The visible representation chosen, English. Empty for omit."
+          },
+          "status": {
+            "enum": [
+              "assumed",
+              "user-confirmed",
+              "user-chosen",
+              "pending"
+            ]
+          }
+        }
+      }
+    },
+    "mood": {
+      "type": "string"
+    },
+    "ambiguities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "description",
+          "critical",
+          "resolution"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "critical": {
+            "type": "boolean"
+          },
+          "resolution": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "shot_breakdown": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "visual_beats",
+        "est_total_s",
+        "clip_duration_s",
+        "fits_single_generation",
+        "shots"
+      ],
+      "properties": {
+        "visual_beats": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Beats with visible content (sound-only beats excluded)."
+        },
+        "est_total_s": {
+          "type": "number",
+          "minimum": 0
+        },
+        "clip_duration_s": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Target length of ONE generation (user --duration or default)."
+        },
+        "fits_single_generation": {
+          "type": "boolean"
+        },
+        "warning": {
+          "type": "string"
+        },
+        "options_offered": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "decision": {
+          "type": "string"
+        },
+        "shots": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 6,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "shot",
+              "beats",
+              "scene_id",
+              "duration_s",
+              "summary"
+            ],
+            "properties": {
+              "shot": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "beats": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "scene_id": {
+                "$ref": "common.schema.json#/$defs/sceneId"
+              },
+              "duration_s": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "summary": {
+                "type": "string"
+              },
+              "camera_suggestion": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "dropped_beats": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "description": "Only when the user chose to reduce beats."
+        }
+      }
+    },
+    "provenance": {
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/provenanceBase"
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

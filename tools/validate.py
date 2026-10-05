@@ -11,10 +11,12 @@ Checks
   1. JSON Schema validation by file name:
        scene-spec.yaml → scene, shot-spec.yaml → shot,
        generation-config.yaml → generation-config, project.yaml → project,
+       screenplay-analysis.yaml → screenplay-analysis,
        characters/*.yaml → character, presets/<kind>/*.yaml → preset
   2. Provenance: every explicit leaf field of a scene/character spec is listed
      in exactly one provenance group (kit/conventions.md §6).
-  3. References: character_id, presets and prompt files exist.
+  3. References: character_id, presets, prompt files and screenplay excerpts exist;
+     screenplay shots cover contiguous beats in order.
 """
 from __future__ import annotations
 
@@ -31,7 +33,7 @@ except ImportError:
 
 ROOT = Path(__file__).resolve().parent.parent
 SCHEMAS = ROOT / "schemas"
-HEADER_FIELDS = {"spec_version", "id", "project", "version", "idea", "idea_language", "notes", "provenance"}
+HEADER_FIELDS = {"spec_version", "id", "project", "version", "idea", "idea_language", "source", "notes", "provenance"}
 
 
 def load_registry() -> Registry:
@@ -56,6 +58,8 @@ def schema_for(path: Path) -> str | None:
         return "shot"
     if path.name == "generation-config.yaml":
         return "generation-config"
+    if path.name == "screenplay-analysis.yaml":
+        return "screenplay-analysis"
     if path.name == "project.yaml":
         return "project"
     if path.parent.name == "characters":
@@ -117,6 +121,23 @@ def check_references(path: Path, kind: str, data: dict) -> list[str]:
             kit = ROOT / "presets" / folder / f"{preset_id}.yaml"
             if not local.exists() and not kit.exists():
                 errors.append(f"preset {preset_kind}/{preset_id} not found")
+        source = data.get("source")
+        if source:
+            excerpt = proj / "screenplay" / source["excerpt"]
+            if not (excerpt / "source-screenplay.md").exists():
+                errors.append(f"source excerpt {source['excerpt']} has no source-screenplay.md")
+            beats = source["beats"]
+            if beats != list(range(beats[0], beats[0] + len(beats))):
+                errors.append(f"source.beats {beats} are not contiguous and in order")
+    if kind == "screenplay-analysis":
+        if not (path.parent / "source-screenplay.md").exists():
+            errors.append("source-screenplay.md missing next to the analysis")
+        beat_ids = [b["id"] for b in data.get("beats", [])]
+        if beat_ids != list(range(1, len(beat_ids) + 1)):
+            errors.append(f"beat ids must be 1..n in order, got {beat_ids}")
+        covered = [b for shot in data["shot_breakdown"]["shots"] for b in shot["beats"]]
+        if covered != sorted(covered):
+            errors.append(f"shots reorder beats: {covered}")
     if kind == "generation-config":
         for run in data.get("runs", []):
             for key in ("prompt_file", "negative_prompt_file"):

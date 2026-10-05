@@ -1,0 +1,9 @@
+spec_version: 1
+id: screenplay-kitchen
+title: Kitchen Noise
+logline: Late at night, Maria finds a broken glass in the kitchen and hears a noise in the hallway.
+created: "2026-10-05"
+adapters: [wan, ltx]
+characters: [maria]
+scenes: [scene-001, scene-002, scene-003]
+notes: All three scenes come from screenplay excerpt-001 (one scene per shot).

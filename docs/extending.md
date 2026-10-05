@@ -36,7 +36,8 @@ folder with two files.
 
 3. Write the **guidance** sections in `adapter.md`. All are required: order of
    information, level of detail, negative prompt, camera, motion, reference
-   images, temporal consistency, duration, known limitations, example.
+   images, temporal consistency, dialogue and sound, duration, known
+   limitations, example.
    Write rules an agent can apply literally ("Put the camera in its own
    sentence after the environment"), not impressions ("the model is good with
    cameras").

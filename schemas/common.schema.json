@@ -3,151 +3,471 @@
   "title": "Video Spec Kit — shared definitions",
   "description": "Enums and reusable objects shared by the other schemas. Terms are defined in kit/vocabulary.md.",
   "$defs": {
-    "specVersion": { "type": "integer", "const": 1 },
-    "kebabId": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
-    "sceneId": { "type": "string", "pattern": "^scene-[0-9]{3}$" },
-    "version": { "type": "string", "pattern": "^v[0-9]{3}$" },
-    "nonEmptyString": { "type": "string", "minLength": 1 },
-    "stringList": { "type": "array", "items": { "type": "string", "minLength": 1 } },
-    "aspectRatio": { "type": "string", "pattern": "^[0-9]+:[0-9]+$" },
-
-    "shotSize": { "enum": ["extreme-wide", "wide", "medium-wide", "medium", "medium-close-up", "close-up", "extreme-close-up"] },
-    "angle": { "enum": ["eye-level", "low", "high", "overhead", "ground-level", "dutch", "over-the-shoulder", "pov"] },
-    "movement": { "enum": ["static", "pan", "tilt", "dolly-in", "dolly-out", "truck", "tracking-follow", "tracking-lead", "tracking-side", "orbit", "crane-up", "crane-down", "zoom-in", "zoom-out", "handheld", "drone"] },
-    "movementSpeed": { "enum": ["very-slow", "slow", "moderate", "fast"] },
-    "depthOfField": { "enum": ["shallow", "moderate", "deep"] },
-    "pace": { "enum": ["calm", "moderate", "energetic"] },
-    "contrast": { "enum": ["low", "medium", "high"] },
-    "colorTemperature": { "enum": ["warm", "neutral", "cool", "mixed"] },
-    "realism": { "enum": ["photorealistic", "stylized-realistic", "3d-animation", "2d-animation", "anime"] },
-    "inputMode": { "enum": ["text-to-video", "image-to-video", "first-last-frame"] },
-    "imageRole": { "enum": ["first_frame", "last_frame", "character", "style", "environment"] },
-
+    "specVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "kebabId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "sceneId": {
+      "type": "string",
+      "pattern": "^scene-[0-9]{3}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^v[0-9]{3}$"
+    },
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stringList": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "aspectRatio": {
+      "type": "string",
+      "pattern": "^[0-9]+:[0-9]+$"
+    },
+    "shotSize": {
+      "enum": [
+        "extreme-wide",
+        "wide",
+        "medium-wide",
+        "medium",
+        "medium-close-up",
+        "close-up",
+        "extreme-close-up"
+      ]
+    },
+    "angle": {
+      "enum": [
+        "eye-level",
+        "low",
+        "high",
+        "overhead",
+        "ground-level",
+        "dutch",
+        "over-the-shoulder",
+        "pov"
+      ]
+    },
+    "movement": {
+      "enum": [
+        "static",
+        "pan",
+        "tilt",
+        "dolly-in",
+        "dolly-out",
+        "truck",
+        "tracking-follow",
+        "tracking-lead",
+        "tracking-side",
+        "orbit",
+        "crane-up",
+        "crane-down",
+        "zoom-in",
+        "zoom-out",
+        "handheld",
+        "drone"
+      ]
+    },
+    "movementSpeed": {
+      "enum": [
+        "very-slow",
+        "slow",
+        "moderate",
+        "fast"
+      ]
+    },
+    "depthOfField": {
+      "enum": [
+        "shallow",
+        "moderate",
+        "deep"
+      ]
+    },
+    "pace": {
+      "enum": [
+        "calm",
+        "moderate",
+        "energetic"
+      ]
+    },
+    "contrast": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "colorTemperature": {
+      "enum": [
+        "warm",
+        "neutral",
+        "cool",
+        "mixed"
+      ]
+    },
+    "realism": {
+      "enum": [
+        "photorealistic",
+        "stylized-realistic",
+        "3d-animation",
+        "2d-animation",
+        "anime"
+      ]
+    },
+    "inputMode": {
+      "enum": [
+        "text-to-video",
+        "image-to-video",
+        "first-last-frame"
+      ]
+    },
+    "imageRole": {
+      "enum": [
+        "first_frame",
+        "last_frame",
+        "character",
+        "style",
+        "environment"
+      ]
+    },
     "format": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "duration_s": { "type": "number", "exclusiveMinimum": 0, "maximum": 60 },
-        "aspect_ratio": { "$ref": "#/$defs/aspectRatio" },
-        "fps": { "type": "integer", "minimum": 1, "maximum": 120 },
-        "input_mode": { "$ref": "#/$defs/inputMode" }
+        "duration_s": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 60
+        },
+        "aspect_ratio": {
+          "$ref": "#/$defs/aspectRatio"
+        },
+        "fps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 120
+        },
+        "input_mode": {
+          "$ref": "#/$defs/inputMode"
+        }
       }
     },
     "environment": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "location": { "type": "string" },
-        "era": { "type": "string" },
-        "time_of_day": { "type": "string" },
-        "weather": { "type": "string" },
-        "atmosphere": { "type": "string" },
-        "background_elements": { "$ref": "#/$defs/stringList" }
+        "location": {
+          "type": "string"
+        },
+        "interior_exterior": {
+          "$ref": "#/$defs/interiorExterior"
+        },
+        "era": {
+          "type": "string"
+        },
+        "time_of_day": {
+          "type": "string"
+        },
+        "weather": {
+          "type": "string"
+        },
+        "atmosphere": {
+          "type": "string"
+        },
+        "background_elements": {
+          "$ref": "#/$defs/stringList"
+        }
       }
     },
     "camera": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "shot_size": { "$ref": "#/$defs/shotSize" },
-        "angle": { "$ref": "#/$defs/angle" },
-        "lens": { "type": "string", "description": "Focal length or lens character, e.g. '35mm', '85mm portrait lens'." },
-        "movement": { "$ref": "#/$defs/movement" },
-        "movement_detail": { "type": "string", "description": "Direction, target and distance of the movement in plain words." },
-        "movement_speed": { "$ref": "#/$defs/movementSpeed" },
-        "framing": { "type": "string", "description": "Composition: subject placement, headroom, leading space." },
-        "depth_of_field": { "$ref": "#/$defs/depthOfField" },
-        "focus_target": { "type": "string" }
+        "shot_size": {
+          "$ref": "#/$defs/shotSize"
+        },
+        "angle": {
+          "$ref": "#/$defs/angle"
+        },
+        "lens": {
+          "type": "string",
+          "description": "Focal length or lens character, e.g. '35mm', '85mm portrait lens'."
+        },
+        "movement": {
+          "$ref": "#/$defs/movement"
+        },
+        "movement_detail": {
+          "type": "string",
+          "description": "Direction, target and distance of the movement in plain words."
+        },
+        "movement_speed": {
+          "$ref": "#/$defs/movementSpeed"
+        },
+        "framing": {
+          "type": "string",
+          "description": "Composition: subject placement, headroom, leading space."
+        },
+        "depth_of_field": {
+          "$ref": "#/$defs/depthOfField"
+        },
+        "focus_target": {
+          "type": "string"
+        }
       }
     },
     "lighting": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "type": { "type": "string", "description": "Main light source(s), e.g. 'neon signs and street lamps'." },
-        "direction": { "type": "string" },
-        "quality": { "type": "string", "description": "soft / hard / diffused / specular..." },
-        "contrast": { "$ref": "#/$defs/contrast" },
-        "color_temperature": { "$ref": "#/$defs/colorTemperature" },
-        "notes": { "type": "string" }
+        "type": {
+          "type": "string",
+          "description": "Main light source(s), e.g. 'neon signs and street lamps'."
+        },
+        "direction": {
+          "type": "string"
+        },
+        "quality": {
+          "type": "string",
+          "description": "soft / hard / diffused / specular..."
+        },
+        "contrast": {
+          "$ref": "#/$defs/contrast"
+        },
+        "color_temperature": {
+          "$ref": "#/$defs/colorTemperature"
+        },
+        "notes": {
+          "type": "string"
+        }
       }
     },
     "motion": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "subject_motion": { "type": "string" },
-        "background_motion": { "type": "string" },
-        "pace": { "$ref": "#/$defs/pace" }
+        "subject_motion": {
+          "type": "string"
+        },
+        "background_motion": {
+          "type": "string"
+        },
+        "pace": {
+          "$ref": "#/$defs/pace"
+        }
       }
     },
     "style": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "visual_style": { "type": "string" },
-        "realism": { "$ref": "#/$defs/realism" },
-        "color_grade": { "type": "string" },
-        "texture": { "type": "string", "description": "Film grain, lens artifacts, sharpness." },
-        "references": { "$ref": "#/$defs/stringList", "description": "Textual style references (genres, eras, techniques)." }
+        "visual_style": {
+          "type": "string"
+        },
+        "realism": {
+          "$ref": "#/$defs/realism"
+        },
+        "color_grade": {
+          "type": "string"
+        },
+        "texture": {
+          "type": "string",
+          "description": "Film grain, lens artifacts, sharpness."
+        },
+        "references": {
+          "$ref": "#/$defs/stringList",
+          "description": "Textual style references (genres, eras, techniques)."
+        }
       }
     },
     "timeline": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "first_frame": { "type": "string" },
+        "first_frame": {
+          "type": "string"
+        },
         "beats": {
           "type": "array",
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["start_s", "end_s", "description"],
+            "required": [
+              "start_s",
+              "end_s",
+              "description"
+            ],
             "properties": {
-              "start_s": { "type": "number", "minimum": 0 },
-              "end_s": { "type": "number", "exclusiveMinimum": 0 },
-              "description": { "$ref": "#/$defs/nonEmptyString" }
+              "start_s": {
+                "type": "number",
+                "minimum": 0
+              },
+              "end_s": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "description": {
+                "$ref": "#/$defs/nonEmptyString"
+              }
             }
           }
         },
-        "last_frame": { "type": "string" }
+        "last_frame": {
+          "type": "string"
+        }
       }
     },
     "referenceImage": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["path", "role"],
+      "required": [
+        "path",
+        "role"
+      ],
       "properties": {
-        "path": { "$ref": "#/$defs/nonEmptyString" },
-        "role": { "$ref": "#/$defs/imageRole" },
-        "notes": { "type": "string" }
+        "path": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "role": {
+          "$ref": "#/$defs/imageRole"
+        },
+        "notes": {
+          "type": "string"
+        }
       }
     },
     "audio": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Only used by adapters that generate sound. Ignored otherwise.",
+      "description": "Sound information. Preserved for the record; adapters only render it when `generate` is true AND the adapter supports audio.",
       "properties": {
-        "ambience": { "type": "string" },
-        "sfx": { "$ref": "#/$defs/stringList" },
-        "dialogue": { "type": "string" },
-        "music": { "type": "string" }
+        "generate": {
+          "type": "boolean",
+          "description": "Ask audio-capable models to generate sound. Default false."
+        },
+        "ambience": {
+          "type": "string"
+        },
+        "sfx": {
+          "$ref": "#/$defs/stringList"
+        },
+        "dialogue": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dialogueLine"
+          }
+        },
+        "music": {
+          "type": "string"
+        }
       }
     },
     "constraints": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "must_include": { "$ref": "#/$defs/stringList" },
-        "must_not_include": { "$ref": "#/$defs/stringList" }
+        "must_include": {
+          "$ref": "#/$defs/stringList"
+        },
+        "must_not_include": {
+          "$ref": "#/$defs/stringList"
+        }
       }
     },
     "provenanceBase": {
       "type": "object",
       "properties": {
-        "user": { "$ref": "#/$defs/stringList" },
-        "inferred": { "$ref": "#/$defs/stringList" },
-        "default": { "$ref": "#/$defs/stringList" }
+        "user": {
+          "$ref": "#/$defs/stringList"
+        },
+        "inferred": {
+          "$ref": "#/$defs/stringList"
+        },
+        "default": {
+          "$ref": "#/$defs/stringList"
+        },
+        "screenplay": {
+          "$ref": "#/$defs/stringList"
+        }
+      }
+    },
+    "interiorExterior": {
+      "enum": [
+        "interior",
+        "exterior",
+        "interior-exterior"
+      ]
+    },
+    "dialogueLine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "character",
+        "text"
+      ],
+      "description": "A spoken line, preserved verbatim in its original language.",
+      "properties": {
+        "character": {
+          "type": "string",
+          "description": "Name as written in the source."
+        },
+        "character_id": {
+          "$ref": "#/$defs/kebabId"
+        },
+        "text": {
+          "type": "string",
+          "description": "Exact words, original language. Never translated."
+        },
+        "parenthetical": {
+          "type": "string"
+        },
+        "on_screen": {
+          "type": "boolean",
+          "description": "true if the speaker is visible while speaking."
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "excerpt",
+        "shot",
+        "beats"
+      ],
+      "description": "Where this scene came from, when it was derived from a screenplay excerpt.",
+      "properties": {
+        "type": {
+          "const": "screenplay"
+        },
+        "excerpt": {
+          "type": "string",
+          "pattern": "^excerpt-[0-9]{3}$",
+          "description": "projects/<id>/screenplay/<excerpt>/"
+        },
+        "shot": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Shot number in screenplay-analysis.yaml → shot_breakdown."
+        },
+        "beats": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "description": "Contiguous beat ids covered, in order."
+        }
       }
     }
   }

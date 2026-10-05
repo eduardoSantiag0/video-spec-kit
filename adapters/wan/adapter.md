@@ -148,6 +148,13 @@ meant to stay still; drop `crowded background` if a crowd is wanted).
 - Head turns toward camera and fast hand gestures are the most common sources
   of identity and anatomy drift.
 
+## Dialogue and sound
+
+The Wan checkpoints in this profile do not generate audio. Never put dialogue
+words or sound effects in the prompt. Show speech as a visible action ("she
+calls out", "his lips move as he whispers") and a sound only through the
+reaction it causes, if the spec has one ("she freezes, eyes on the hallway").
+
 ## Duration
 
 - Native: 81 frames at 16 fps (≈5 s) for 14B / A14B; 121 frames at 24 fps

@@ -75,6 +75,8 @@ Run every check. Blocking conflicts stop compilation.
 | C13 | Duration above what the target adapters generate well (see each `adapter.md` → Duration) | no — warning |
 | C14 | `timeline.first_frame` differs from previous scene's `last_frame` | no — warning |
 | C15 | Referenced presets list each other in `avoid_with` | no — warning |
+| C16 | `source.type: screenplay` and the timeline drops, adds or reorders the beats listed in `source.beats`, or beats are not contiguous | yes |
+| C17 | A character marked `offscreen`/`mentioned` in the screenplay analysis appears as a subject | yes |
 
 An explicit scene value that overrides a preset value is **not** a conflict —
 that is how overrides work.
@@ -104,6 +106,9 @@ Assign short phrases to tiers. **Each fact appears in one tier only.**
 ### 6. Write
 
 `shot-spec.yaml` from the template; `negatives` = `constraints.must_not_include`.
+Copy `source` and add `derived_from.screenplay_analysis` for screenplay-derived scenes.
+Dialogue text and sound cues stay in `audio`; they never become P1–P3 phrases
+unless `audio.generate: true`.
 Validate against `schemas/shot.schema.json` (required fields, enums, no
 placeholders).
 

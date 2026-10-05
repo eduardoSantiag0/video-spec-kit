@@ -115,6 +115,14 @@ extra limbs, watermark, text
 - One continuous shot, no cuts.
 - Keep the number of described changes ≤ the number of beats (max 3 in 5 s).
 
+## Dialogue and sound
+
+LTX-Video 0.9.x is silent: show speech and sound only as visible action and
+reaction. LTX-2 can generate audio — use it only when `audio.generate: true`
+in the spec. Then the `AUDIO` slot describes ambience and effects in one
+sentence and quotes dialogue verbatim with its speaker ("The woman calls out:
+\"João?\""). Otherwise no words or sounds in the prompt.
+
 ## Duration
 
 - Frames must be `8n + 1` (e.g. 97, 121, 161, 257). Width/height divisible by 32.

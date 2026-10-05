@@ -42,6 +42,7 @@ and comes back for the next action. The other skills exist for fine control.
 | `$video-prompt wan` | Compile for one adapter (or all, without argument). |
 | `$video-review "<what you saw>"` | Diagnose a generation. |
 | `$video-iterate "<change>"` | New version with that change. |
+| `$video-screenplay [--model] [--duration]` + excerpt | Screenplay excerpt → analysis → shots → specs → prompts. Aliases: `$video_from_screenwright`, `$video-from-screenplay`. See [screenplay.md](screenplay.md). |
 
 Agents that use `/` instead of `$` (Claude Code, Gemini CLI): `/video`,
 `/video-prompt wan`, etc. See [agent-support.md](agent-support.md).

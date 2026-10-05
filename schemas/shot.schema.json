@@ -4,25 +4,72 @@
   "description": "shot-spec.yaml — resolved, conflict-checked, model-agnostic representation of one shot. Derived from scene-spec + characters + presets + defaults. Input of every prompt adapter.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["spec_version", "scene_id", "version", "derived_from", "format", "subjects", "environment", "camera", "lighting", "style", "timeline", "priorities", "conflicts", "warnings", "provenance"],
+  "required": [
+    "spec_version",
+    "scene_id",
+    "version",
+    "derived_from",
+    "format",
+    "subjects",
+    "environment",
+    "camera",
+    "lighting",
+    "style",
+    "timeline",
+    "priorities",
+    "conflicts",
+    "warnings",
+    "provenance"
+  ],
   "properties": {
-    "spec_version": { "$ref": "common.schema.json#/$defs/specVersion" },
-    "scene_id": { "$ref": "common.schema.json#/$defs/sceneId" },
-    "version": { "$ref": "common.schema.json#/$defs/version" },
+    "spec_version": {
+      "$ref": "common.schema.json#/$defs/specVersion"
+    },
+    "scene_id": {
+      "$ref": "common.schema.json#/$defs/sceneId"
+    },
+    "version": {
+      "$ref": "common.schema.json#/$defs/version"
+    },
     "derived_from": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["scene_spec"],
+      "required": [
+        "scene_spec"
+      ],
       "properties": {
-        "scene_spec": { "type": "string" },
-        "characters": { "$ref": "common.schema.json#/$defs/stringList" },
-        "presets": { "$ref": "common.schema.json#/$defs/stringList" },
-        "defaults": { "type": "string" }
+        "scene_spec": {
+          "type": "string"
+        },
+        "characters": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "presets": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "defaults": {
+          "type": "string"
+        },
+        "screenplay_analysis": {
+          "type": "string"
+        }
       }
     },
+    "source": {
+      "$ref": "common.schema.json#/$defs/source"
+    },
     "format": {
-      "allOf": [{ "$ref": "common.schema.json#/$defs/format" }],
-      "required": ["duration_s", "aspect_ratio", "fps", "input_mode"]
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/format"
+        }
+      ],
+      "required": [
+        "duration_s",
+        "aspect_ratio",
+        "fps",
+        "input_mode"
+      ]
     },
     "subjects": {
       "type": "array",
@@ -30,69 +77,157 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "anchor", "action"],
+        "required": [
+          "id",
+          "anchor",
+          "action"
+        ],
         "properties": {
-          "id": { "$ref": "common.schema.json#/$defs/kebabId" },
-          "character_id": { "$ref": "common.schema.json#/$defs/kebabId" },
-          "anchor": { "type": "string", "description": "Identity phrase used verbatim in prompts (character prompt_anchor or inline description)." },
-          "action": { "type": "string" },
-          "expression": { "type": "string" },
-          "position": { "type": "string" },
-          "locked": { "$ref": "common.schema.json#/$defs/stringList", "description": "Resolved consistency_lock values." }
+          "id": {
+            "$ref": "common.schema.json#/$defs/kebabId"
+          },
+          "character_id": {
+            "$ref": "common.schema.json#/$defs/kebabId"
+          },
+          "anchor": {
+            "type": "string",
+            "description": "Identity phrase used verbatim in prompts (character prompt_anchor or inline description)."
+          },
+          "action": {
+            "type": "string"
+          },
+          "expression": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string"
+          },
+          "locked": {
+            "$ref": "common.schema.json#/$defs/stringList",
+            "description": "Resolved consistency_lock values."
+          }
         }
       }
     },
-    "environment": { "$ref": "common.schema.json#/$defs/environment" },
-    "camera": {
-      "allOf": [{ "$ref": "common.schema.json#/$defs/camera" }],
-      "required": ["shot_size", "angle", "movement"]
+    "environment": {
+      "$ref": "common.schema.json#/$defs/environment"
     },
-    "lighting": { "$ref": "common.schema.json#/$defs/lighting" },
-    "motion": { "$ref": "common.schema.json#/$defs/motion" },
-    "style": { "$ref": "common.schema.json#/$defs/style" },
+    "camera": {
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/camera"
+        }
+      ],
+      "required": [
+        "shot_size",
+        "angle",
+        "movement"
+      ]
+    },
+    "lighting": {
+      "$ref": "common.schema.json#/$defs/lighting"
+    },
+    "motion": {
+      "$ref": "common.schema.json#/$defs/motion"
+    },
+    "style": {
+      "$ref": "common.schema.json#/$defs/style"
+    },
     "timeline": {
-      "allOf": [{ "$ref": "common.schema.json#/$defs/timeline" }],
-      "required": ["first_frame", "beats", "last_frame"]
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/timeline"
+        }
+      ],
+      "required": [
+        "first_frame",
+        "beats",
+        "last_frame"
+      ]
     },
     "references": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "images": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/referenceImage" } }
+        "images": {
+          "type": "array",
+          "items": {
+            "$ref": "common.schema.json#/$defs/referenceImage"
+          }
+        }
       }
     },
-    "audio": { "$ref": "common.schema.json#/$defs/audio" },
+    "audio": {
+      "$ref": "common.schema.json#/$defs/audio"
+    },
     "continuity": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "previous_scene": { "$ref": "common.schema.json#/$defs/sceneId" },
-        "next_scene": { "$ref": "common.schema.json#/$defs/sceneId" },
-        "must_remain_consistent": { "$ref": "common.schema.json#/$defs/stringList" }
+        "previous_scene": {
+          "$ref": "common.schema.json#/$defs/sceneId"
+        },
+        "next_scene": {
+          "$ref": "common.schema.json#/$defs/sceneId"
+        },
+        "must_remain_consistent": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        }
       }
     },
     "priorities": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["p1"],
+      "required": [
+        "p1"
+      ],
       "description": "Prompt budget tiers. P1 always appears; P2 if the adapter budget allows; P3 only if space remains.",
       "properties": {
-        "p1": { "$ref": "common.schema.json#/$defs/stringList" },
-        "p2": { "$ref": "common.schema.json#/$defs/stringList" },
-        "p3": { "$ref": "common.schema.json#/$defs/stringList" }
+        "p1": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "p2": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        },
+        "p3": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        }
       }
     },
-    "negatives": { "$ref": "common.schema.json#/$defs/stringList", "description": "Scene must_not_include items. Quality negatives are added by adapters." },
+    "negatives": {
+      "$ref": "common.schema.json#/$defs/stringList",
+      "description": "Scene must_not_include items. Quality negatives are added by adapters."
+    },
     "complexity": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "subjects": { "type": "integer", "minimum": 0 },
-        "simultaneous_actions": { "type": "integer", "minimum": 0 },
-        "camera_moves": { "type": "integer", "minimum": 0 },
-        "beats": { "type": "integer", "minimum": 0 },
-        "risk": { "enum": ["low", "medium", "high"] },
-        "risk_reasons": { "$ref": "common.schema.json#/$defs/stringList" }
+        "subjects": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "simultaneous_actions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "camera_moves": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "beats": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "risk": {
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "risk_reasons": {
+          "$ref": "common.schema.json#/$defs/stringList"
+        }
       }
     },
     "conflicts": {
@@ -101,22 +236,55 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "fields", "description", "blocking", "resolution"],
+        "required": [
+          "id",
+          "fields",
+          "description",
+          "blocking",
+          "resolution"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "fields": { "$ref": "common.schema.json#/$defs/stringList" },
-          "description": { "type": "string" },
-          "blocking": { "type": "boolean" },
-          "resolution": { "type": "string", "description": "How it was resolved, or 'pending user decision'." }
+          "id": {
+            "type": "string"
+          },
+          "fields": {
+            "$ref": "common.schema.json#/$defs/stringList"
+          },
+          "description": {
+            "type": "string"
+          },
+          "blocking": {
+            "type": "boolean"
+          },
+          "resolution": {
+            "type": "string",
+            "description": "How it was resolved, or 'pending user decision'."
+          }
         }
       }
     },
-    "warnings": { "$ref": "common.schema.json#/$defs/stringList" },
+    "warnings": {
+      "$ref": "common.schema.json#/$defs/stringList"
+    },
     "provenance": {
-      "allOf": [{ "$ref": "common.schema.json#/$defs/provenanceBase" }],
+      "allOf": [
+        {
+          "$ref": "common.schema.json#/$defs/provenanceBase"
+        }
+      ],
       "properties": {
-        "preset": { "type": "object", "additionalProperties": { "$ref": "common.schema.json#/$defs/stringList" } },
-        "character": { "type": "object", "additionalProperties": { "$ref": "common.schema.json#/$defs/stringList" } }
+        "preset": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "common.schema.json#/$defs/stringList"
+          }
+        },
+        "character": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "common.schema.json#/$defs/stringList"
+          }
+        }
       },
       "unevaluatedProperties": false
     }

@@ -1,0 +1,8 @@
+spec_version: 1
+id: screenplay-rooftop
+title: Rooftop Dawn
+logline: An older woman tends her rooftop garden at dawn after a long winter.
+created: "2026-10-05"
+adapters: [wan, ltx]
+characters: [elena]
+scenes: [scene-001]

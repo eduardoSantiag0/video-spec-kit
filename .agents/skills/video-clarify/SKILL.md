@@ -17,6 +17,8 @@ record that `video-scene` turns into a spec, where every value is tagged
 - The user types `$video-clarify <idea>` to see what is ambiguous without
   writing files.
 - An answer to a previous round introduced a new critical gap (round 2).
+- Called by `video-screenplay` with a pre-filled record: dimensions the
+  screenplay states are STATED with source `screenplay` and are never asked.
 
 ## Inputs
 
@@ -89,6 +91,7 @@ city at once).
 ### 5. Parse the answer
 
 - Map each answer to spec paths. Picked option or own words → `user`.
+- Values stated in a screenplay excerpt → `screenplay` (not `user`).
 - "You choose" / "whatever" → recommended option, tagged `inferred`.
 - Extra details the user volunteers (e.g. "she looks tired") → `user`.
 - An answer that changes an assumption → that path becomes `user`.

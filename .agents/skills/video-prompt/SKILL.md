@@ -63,6 +63,8 @@ Prompt Compiler stages handled here: (6) select adapter profile, (7) render,
    | Character names ("Mika") | Replace with the anchor or a pronoun — models do not know names. |
    | Meta language ("this video shows", "generate", "prompt") | Remove. |
    | Cut language ("cut to", "then the scene changes") | Rewrite as continuous change. |
+   | Dialogue words or sound described as images ("a BANG", "says 'João?'") | Keep only the visible action ("calls out", "freezes"). Words go in the prompt only when `audio.generate: true` and the adapter `supports.audio`. |
+   | Translated on-screen text | Restore the original-language text from the spec. |
    | Tense other than present | Rewrite in present tense. |
 
 7. **Negative prompt** (only if the adapter has `negative_prompt: true` and the

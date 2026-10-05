@@ -45,6 +45,7 @@ Classify the user message, first match wins:
 | Empty / only "$video"                                      | Ask: "Describe the video in one or two sentences — who/what, doing what, where." Show one example. Stop. |
 | Feedback on a generated clip (mentions result, face, camera "was", "looks", "changed", "artifacts") **and** a scene exists | Go to **Feedback flow**. |
 | "next scene", "continue", references an earlier scene      | **New scene flow** in the same project with `continuity` set. |
+| Screenplay excerpt (sluglines `INT.`/`EXT.`, CHARACTER cues with dialogue, or several numbered/ordered actions) | Run `.agents/skills/video-screenplay/SKILL.md`. |
 | "status", "where are we", "what's next"                    | Summarize each scene: current version, run status, last review verdict. Stop. |
 | Anything describing visual content                         | **New scene flow**. |
 

@@ -19,11 +19,24 @@ Canonical skills live in `.agents/skills/<name>/SKILL.md`:
 | `video-prompt` | Compile prompts per adapter (`wan`, `ltx`) + `generation-config.yaml`. |
 | `video-review` | Diagnose a generated clip from the user's description. |
 | `video-iterate` | New version with one controlled change, recorded diff. |
+| `video-screenplay` | Screenplay excerpt → analysis → shot breakdown → standard scene specs → prompts. |
 
 When the user types `$video`, `/video`, or describes a video idea, read
 `.agents/skills/video/SKILL.md` and follow it. Same for the other skills by
 name. If your agent does not load skills automatically, read the file
 yourself.
+
+### Aliases
+
+Treat these exactly like the skill they point to (same file, same arguments):
+
+| Typed by the user | Skill |
+|-------------------|-------|
+| `$video_from_screenwright`, `/video_from_screenwright` | `video-screenplay` |
+| `$video-from-screenplay`, `/video-from-screenplay` | `video-screenplay` |
+
+A pasted screenplay excerpt (sluglines such as `INT.`/`EXT.`, CHARACTER cues)
+also goes to `video-screenplay`.
 
 ## Rules for every agent
 

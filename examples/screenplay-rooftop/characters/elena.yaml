@@ -1,0 +1,36 @@
+spec_version: 1
+id: elena
+name: Elena
+role: main character
+age: 60s
+
+face:
+  features: warm, lined face
+
+hair:
+  color: silver
+  length: long
+  style: gathered in a low bun
+
+wardrobe:
+  outfit: grey wool cardigan
+  colors: [grey]
+
+distinctive_features: [silver hair in a low bun]
+
+behavior:
+  demeanor: calm, unhurried
+  movement_style: slow, practiced gestures
+
+consistency_lock:
+  - hair.color
+  - hair.style
+  - wardrobe.outfit
+
+prompt_anchor: "a woman in her 60s with silver hair gathered in a low bun and a warm, lined face, wearing a grey wool cardigan"
+
+provenance:
+  screenplay: [name, age, wardrobe.outfit, wardrobe.colors]
+  inferred: [role, face, hair, distinctive_features, behavior, consistency_lock, prompt_anchor]
+
+notes: Age and cardigan come from the screenplay ("ELENA (60s), in a grey wool cardigan"); "She" in the excerpt sets the gender presentation. Hair and face were designed by the agent and listed under "I assumed".

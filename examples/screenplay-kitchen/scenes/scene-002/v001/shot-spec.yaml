@@ -1,0 +1,133 @@
+spec_version: 1
+scene_id: scene-002
+version: v001
+derived_from:
+  scene_spec: scene-spec.yaml
+  presets: [style/cinematic]
+  defaults: kit/defaults.yaml
+  screenplay_analysis: ../../../screenplay/excerpt-001/screenplay-analysis.yaml
+source:
+  type: screenplay
+  excerpt: excerpt-001
+  shot: 2
+  beats: [3]
+
+format: { duration_s: 3, aspect_ratio: "16:9", fps: 24, input_mode: text-to-video }
+
+subjects:
+  - id: glass
+    anchor: "a broken drinking glass"
+    action: lies shattered on the floor
+    position: center of frame at the end of the tilt
+
+environment:
+  location: a kitchen
+  interior_exterior: interior
+  era: present day
+  time_of_day: night
+  atmosphere: silent and still
+  background_elements: [dark floor tiles, the edge of the refrigerator's pool of light]
+
+camera:
+  shot_size: close-up
+  angle: pov
+  lens: 35mm
+  movement: tilt
+  movement_detail: slow tilt down from the dark floor ahead to the glass shards, as if her gaze finds them
+  movement_speed: slow
+  framing: shards centered at the end of the move
+  depth_of_field: shallow
+  focus_target: the glass shards
+
+lighting:
+  type: light from the open refrigerator
+  direction: low, from the side
+  quality: hard, narrow pool of light
+  contrast: high
+  color_temperature: cool
+  notes: the rest of the kitchen stays dark
+
+motion:
+  subject_motion: none — the shards lie still and glint
+  background_motion: none
+  pace: calm
+
+style:
+  visual_style: cinematic feature-film look
+  realism: photorealistic
+  color_grade: rich contrast with deep shadows and controlled highlights
+  texture: subtle 35mm film grain
+
+timeline:
+  first_frame: Dark floor tiles at the edge of the cold refrigerator light.
+  beats:
+    - { start_s: 0, end_s: 3, description: "She notices a broken glass on the floor." }
+  last_frame: Close-up of the broken glass shards glinting in the cold refrigerator light.
+
+continuity:
+  previous_scene: scene-001
+  next_scene: scene-003
+  must_remain_consistent: [refrigerator light as the only light source, night]
+
+priorities:
+  p1:
+    - "a broken drinking glass shattered on the kitchen floor"
+    - "point-of-view close-up, looking down"
+    - "slow tilt down from the dark floor to the shards"
+    - "kitchen at night"
+  p2:
+    - "shards glinting in cold refrigerator light, high contrast, deep shadows"
+    - "photorealistic cinematic look"
+    - "dark floor tiles"
+  p3:
+    - "shallow depth of field"
+    - "subtle film grain"
+
+negatives: [other people, blood, feet or hands in frame]
+
+complexity:
+  subjects: 1
+  simultaneous_actions: 0
+  camera_moves: 1
+  beats: 1
+  risk: low
+  risk_reasons: []
+
+conflicts: []
+warnings:
+  - "3-second shot: below the 5 s many models are tuned for; generate at the native length if needed and trim in editing."
+
+provenance:
+  screenplay:
+    - subjects[0].anchor
+    - subjects[0].action
+    - environment.location
+    - environment.interior_exterior
+    - environment.time_of_day
+    - lighting.type
+    - timeline.beats[0].description
+  user:
+    - presets.style
+  inferred:
+    - format.duration_s
+    - subjects[0].position
+    - environment.atmosphere
+    - environment.background_elements
+    - camera
+    - lighting.direction
+    - lighting.quality
+    - lighting.contrast
+    - lighting.color_temperature
+    - lighting.notes
+    - motion
+    - timeline.first_frame
+    - timeline.last_frame
+    - negatives
+    - continuity
+  default:
+    - format.aspect_ratio
+    - format.fps
+    - format.input_mode
+    - environment.era
+  preset:
+    style/cinematic: [style]

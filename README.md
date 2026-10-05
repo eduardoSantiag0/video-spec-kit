@@ -1,5 +1,7 @@
 # Video Spec Kit
 
+🇧🇷 [Leia em português](README.pt-BR.md)
+
 **Specify before you prompt.** Turn a vague idea for an AI-generated video into
 a clear, structured, versioned specification — and compile it into prompts
 tuned for each video model.
@@ -17,6 +19,9 @@ variable at a time**.
 > schemas, templates and model adapters that run inside the coding agent you
 > already use. No backend, no API, nothing paid required.
 
+Already have a script? Paste a screenplay excerpt instead of an idea —
+`$video-screenplay` turns it into shots and prompts without inventing story.
+
 ---
 
 ## Table of contents
@@ -27,14 +32,17 @@ variable at a time**.
 - [Installation](#installation)
 - [Quick start](#quick-start)
 - [Example](#example)
+- [From a screenplay](#from-a-screenplay)
 - [Workflow](#workflow)
 - [File structure](#file-structure)
 - [Agent support](#agent-support)
 - [Model support](#model-support)
 - [Create an adapter](#create-an-adapter)
 - [Create a preset](#create-a-preset)
+- [Languages](#languages)
 - [Contributing](#contributing)
 - [Roadmap](#roadmap)
+- [How this project was made](#how-this-project-was-made)
 - [License](#license)
 
 ---
@@ -175,6 +183,37 @@ And the experiment that fixed the face (`v002/iteration.md`):
 
 Seed, model and settings unchanged → the result is attributable to that one line.
 
+## From a screenplay
+
+```
+$video-screenplay --duration 5
+
+INT. COZINHA - NOITE
+
+Maria entra lentamente na cozinha.
+A luz da geladeira aberta ilumina seu rosto.
+Ela percebe um copo quebrado no chão.
+
+MARIA
+João?
+
+Um barulho vem do corredor.
+Maria congela.
+```
+
+The skill parses sluglines, characters, action, dialogue and sound; separates
+what is **visible** from thoughts, memories and sounds; keeps the beats in
+order; warns that 5 visual beats don't fit one 5-second clip; and — after you
+pick "split" — writes three ordinary scenes (enter into the fridge light ·
+insert of the broken glass · call, noise, freeze) with Wan and LTX prompts.
+`"João?"` is kept verbatim but not voiced, the noise is only a sound cue, and
+nobody appears in the hallway.
+
+Also available as `$video_from_screenwright` and `$video-from-screenplay`.
+Guide: [docs/screenplay.md](docs/screenplay.md) · examples:
+[single shot](examples/screenplay-rooftop/walkthrough.md),
+[three shots, PT-BR](examples/screenplay-kitchen/walkthrough.md).
+
 ## Workflow
 
 Most people only use **`video`**. It runs the whole pipeline and routes your
@@ -191,6 +230,7 @@ feedback. The other skills give fine control:
 | `video-prompt` | Compile for a model: `$video-prompt wan`, `$video-prompt ltx`. |
 | `video-review` | Diagnose a generation from your description. |
 | `video-iterate` | New version, one change, same seed, recorded diff. |
+| `video-screenplay` | Screenplay excerpt → visual analysis → shot breakdown → scene specs → prompts. Aliases: `video_from_screenwright`, `video-from-screenplay`. |
 
 Details: [docs/workflow.md](docs/workflow.md) ·
 how prompts are compiled: [docs/prompt-compiler.md](docs/prompt-compiler.md).
@@ -206,16 +246,16 @@ provenance:
   default:  [format.duration_s, format.aspect_ratio, format.fps]
 ```
 
-`user` = you said it · `inferred` = derived from what you said ·
-`default` = a kit default you never mentioned.
+`user` = you said it · `screenplay` = written in your screenplay excerpt ·
+`inferred` = derived from what you said · `default` = a kit default you never mentioned.
 
 ## File structure
 
 ```
 video-spec-kit/
 ├── AGENTS.md  CLAUDE.md  GEMINI.md     # agent entry points (all point to AGENTS.md)
-├── .agents/skills/<skill>/SKILL.md     # the 9 skills — canonical source
-├── .claude/skills/  .gemini/commands/  # generated thin wrappers
+├── .agents/skills/<skill>/SKILL.md     # the 10 skills — canonical source
+├── .claude/{skills,commands}/  .gemini/commands/  # generated wrappers + aliases
 ├── kit/
 │   ├── conventions.md                  # layout, versioning, provenance, language policy
 │   ├── defaults.yaml                   # defaults + inference rules
@@ -228,8 +268,11 @@ video-spec-kit/
 │   └── _template/
 ├── presets/{styles,cameras,lighting}/*.yaml
 ├── projects/                           # YOUR work goes here
-├── examples/tokyo-rain/                # complete reference run
-├── docs/                               # philosophy, workflow, compiler, agents, extending, comfyui
+├── examples/
+│   ├── tokyo-rain/                     # idea → v001 → review → v002
+│   ├── screenplay-rooftop/             # screenplay → one shot
+│   └── screenplay-kitchen/             # screenplay (PT-BR) → three shots
+├── docs/                               # philosophy, workflow, compiler, screenplay, agents, extending, comfyui
 └── tools/                              # optional: validate.py, sync_agent_wrappers.py
 ```
 
@@ -239,6 +282,9 @@ What one scene looks like in your project:
 projects/<project>/
   project.yaml
   characters/<id>.yaml
+  screenplay/excerpt-001/      # only when you start from a screenplay
+    source-screenplay.md       # verbatim
+    screenplay-analysis.yaml   # beats, dialogue, sound, non-visual, shot breakdown
   scenes/scene-001/
     history.md                 # one row per version: change → result → verdict
     v001/
@@ -292,8 +338,8 @@ cp -r adapters/_template adapters/<model-id>
 
 Fill the frontmatter profile (word budget, slot order, negative prompt,
 frame rule, sizes per aspect ratio, sampler defaults) and the guidance
-sections (camera, motion, reference images, temporal consistency, duration,
-limitations). Then `$video-prompt <model-id>`.
+sections (camera, motion, reference images, temporal consistency, dialogue
+and sound, duration, limitations). Then `$video-prompt <model-id>`.
 Full guide: [docs/extending.md](docs/extending.md#create-a-prompt-adapter).
 
 ## Create a preset
@@ -314,6 +360,19 @@ values:
 Use it in a scene with `presets: { lighting: blue-hour }`; any field the scene
 sets explicitly overrides the preset.
 Full guide: [docs/extending.md](docs/extending.md#create-a-preset).
+
+## Languages
+
+- Write ideas and screenplays in **any language**.
+- The agent asks questions and reports **in your language**.
+- Specs are normalized to **English** internally, so they stay comparable
+  across projects and contributors.
+- Prompts are in **English** unless a model's adapter sets another language
+  because the model benefits from it.
+- Never translated: your original idea, the screenplay excerpt, proper names,
+  dialogue, and text that must appear inside the image.
+
+Full rule: `kit/conventions.md` §7.
 
 ## Contributing
 
@@ -336,6 +395,17 @@ Planned — **not** in V1, on purpose:
 - [ ] Community presets
 - [ ] Timeline / story editor across scenes
 - [ ] Multi-shot generation in one clip
+
+## How this project was made
+
+This project was built **mainly with AI**. The architecture, skills, schemas,
+adapters, examples and documentation were generated by an AI coding agent
+(Claude, in Claude Code) from detailed specifications written by the
+maintainer, who directed the design, set the requirements and reviewed the
+result. The kit's own files were checked with the included validator, but the
+Wan/LTX settings were not tested against real generations — treat them as
+documented starting points — and the reviews in the examples are fictional.
+Corrections from people who run these models are especially welcome.
 
 ## License
 

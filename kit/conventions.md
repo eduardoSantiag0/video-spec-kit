@@ -15,6 +15,9 @@ projects/<project-id>/
   project.yaml                 # project metadata, defaults, target adapters
   characters/<character-id>.yaml
   refs/                        # user reference images (optional)
+  screenplay/<excerpt-id>/     # only for scenes made by video-screenplay
+    source-screenplay.md       # the excerpt, verbatim — never edited
+    screenplay-analysis.yaml   # parse, visual extraction, beats, shot breakdown
   scenes/<scene-id>/
     history.md                 # experiment log for this scene (one row per version)
     v001/
@@ -36,7 +39,9 @@ projects/<project-id>/
 ```
 
 A scene is one continuous generated clip (one shot). Multi-shot sequences are
-built from several scenes linked through `continuity`.
+built from several scenes linked through `continuity`. A screenplay excerpt that
+needs several shots becomes several scenes; each one points back to its excerpt,
+shot number and beats with a `source` block.
 
 ## 2. Naming
 
@@ -46,6 +51,7 @@ built from several scenes linked through `continuity`.
 | character id | kebab-case                  | `mika`           |
 | scene id     | `scene-` + 3 digits         | `scene-001`      |
 | version      | `v` + 3 digits              | `v002`           |
+| excerpt id   | `excerpt-` + 3 digits       | `excerpt-001`    |
 | adapter id   | lowercase directory name    | `wan`, `ltx`     |
 | preset ref   | `<kind>/<id>`               | `lighting/neon-night` |
 
@@ -76,6 +82,9 @@ characters/*.yaml ─┘     (truth)            (resolved IR)        (compiled a
 ```
 
 - `scene-spec.yaml` holds the intent. Everything downstream is derived.
+- For screenplay work the chain starts one step earlier and is mandatory:
+  `source-screenplay.md → screenplay-analysis.yaml → scene-spec.yaml → shot-spec.yaml → prompts`.
+  Prompts are never written from the raw screenplay.
 - To change the video, change the spec (or a character/preset) and recompile.
 - If a user hand-edits a prompt, the agent back-ports the intent into
   `scene-spec.yaml` and recompiles. A manual prompt that cannot be expressed in
@@ -104,11 +113,12 @@ override the preset. Defaults only fill fields no layer covers.
 Every value written to `scene-spec.yaml` is tagged by where it came from, in a
 `provenance` block grouped by source. Every explicit leaf field must appear in
 exactly one group. Header fields are not listed: `spec_version`, `id`,
-`project`, `version`, `idea`, `idea_language`, `notes`.
+`project`, `version`, `idea`, `idea_language`, `source`, `notes`.
 
 | Source     | Meaning                                                              |
 |------------|----------------------------------------------------------------------|
 | `user`     | The user stated it (in the idea or an answer).                       |
+| `screenplay` | Stated in the screenplay excerpt (heading, action, dialogue, camera direction). |
 | `inferred` | The agent derived it from what the user said (e.g. night → artificial light). |
 | `default`  | Taken from `kit/defaults.yaml` / `project.yaml` with no evidence.    |
 
@@ -147,7 +157,12 @@ This policy is mandatory for every skill.
    original words:
    - `idea` — the user's idea verbatim, in the original language, with
      `idea_language` set (e.g. `pt-BR`);
-   - user quotes in `review.md` ("User observation (verbatim)").
+   - user quotes in `review.md` ("User observation (verbatim)");
+   - `source-screenplay.md` and every `original` field of
+     `screenplay-analysis.yaml`;
+   - dialogue text (`audio.dialogue[].text`) and proper names as written;
+   - text that must appear inside the image (signs, notes, screens) — never
+     translate it unless the user asks.
 5. **Prompts in English** unless the adapter's profile sets another
    `prompt.language` because the target model explicitly benefits from it.
    The adapter, not the user's language, decides the prompt language.

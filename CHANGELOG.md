@@ -4,6 +4,24 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- `video-screenplay` skill: screenplay excerpt (any language) → parse → visual
+  extraction → clarify → standard scene specs (one per shot) → storyboard →
+  shot spec → prompts. Aliases `video_from_screenwright` and `video-from-screenplay`.
+- `screenplay-analysis.yaml` (schema + template) and verbatim `source-screenplay.md`.
+- Scene `source` block; `environment.interior_exterior`; structured
+  `audio.dialogue` lines and `audio.generate`; provenance source `screenplay`.
+- Conflict checks C16 (screenplay beat order) and C17 (offscreen character rendered).
+- "Dialogue and sound" section in adapters.
+- Alias support in `tools/sync_agent_wrappers.py`; screenplay checks in `tools/validate.py`.
+- Examples `screenplay-rooftop` (single shot) and `screenplay-kitchen` (PT-BR, three shots).
+- `docs/screenplay.md`, `README.pt-BR.md`.
+
+### Changed
+- `audio.dialogue` is now a list of `{character, text, ...}` lines (was a string).
+
 ## [0.1.0] — 2026-10-05
 
 ### Added

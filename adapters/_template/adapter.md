@@ -43,6 +43,7 @@ deterministically; cite the model's official guidance when you have it.
 ## Motion
 ## Reference images (image-to-video / first-last-frame)
 ## Temporal consistency
+## Dialogue and sound
 ## Duration
 ## Known limitations
 ## Example

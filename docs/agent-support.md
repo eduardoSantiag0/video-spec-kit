@@ -14,6 +14,15 @@ each skill's instructions exist in one place only.
 | **OpenCode** | `.agents/skills/` and `.claude/skills/` | Ask: "use the video skill: …" | The agent loads skills with its `skill` tool. It sees both copies of each name; both lead to the same canonical file. |
 | **Any other agent** | `AGENTS.md` | "Read `.agents/skills/video/SKILL.md` and follow it: <idea>" | Works with any agent that can read files in the repo, including ones backed by local models. |
 
+## Aliases
+
+`video-screenplay` can also be called as `video_from_screenwright` or
+`video-from-screenplay`. Underscores are not allowed in skill names, so
+aliases are generated as slash commands (`.claude/commands/`,
+`.gemini/commands/`) and listed in `AGENTS.md` for agents without commands.
+Declare aliases in a skill's frontmatter (`metadata: aliases: a, b`) and run
+the sync script.
+
 ## No `$video` in your agent?
 
 Every skill is a plain Markdown file. Paste this as your first message:
