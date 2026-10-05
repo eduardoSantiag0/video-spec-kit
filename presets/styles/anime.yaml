@@ -1,0 +1,12 @@
+spec_version: 1
+id: anime
+kind: style
+description: Japanese 2D animation look — clean line art, cel shading, painted backgrounds.
+values:
+  style:
+    visual_style: Japanese anime, clean line art, cel shading, detailed painted backgrounds
+    realism: anime
+    color_grade: vibrant but balanced palette
+    texture: crisp lines, no film grain
+good_for: [stylized stories, fantasy, expressive characters]
+avoid_with: [styles/documentary]

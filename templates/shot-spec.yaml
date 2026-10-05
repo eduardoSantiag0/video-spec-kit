@@ -1,0 +1,71 @@
+# TEMPLATE — shot-spec.yaml (DERIVED — do not edit by hand; edit scene-spec.yaml and recompile)
+# Schema: schemas/shot.schema.json · Produced by video-shot
+# Every field is fully resolved: presets merged, characters expanded, defaults applied.
+
+spec_version: 1
+scene_id: scene-001
+version: v001
+derived_from:
+  scene_spec: scene-spec.yaml
+  characters: [<../../../characters/<id>.yaml>]
+  presets: [<kind/id>]
+  defaults: kit/defaults.yaml
+
+format: { duration_s: <s>, aspect_ratio: "<W:H>", fps: <int>, input_mode: <mode> }
+
+subjects:
+  - id: <local-id>
+    character_id: <character-id>
+    anchor: "<character prompt_anchor, verbatim>"
+    action: <action>
+    expression: <expression>
+    position: <position>
+    locked: [<resolved consistency-locked value>]
+
+environment: { location: <>, era: <>, time_of_day: <>, weather: <>, atmosphere: <>, background_elements: [<>] }
+
+camera:
+  shot_size: <>
+  angle: <>
+  lens: <>
+  movement: <>
+  movement_detail: <>
+  movement_speed: <>
+  framing: <>
+  depth_of_field: <>
+  focus_target: <>
+
+lighting: { type: <>, direction: <>, quality: <>, contrast: <>, color_temperature: <> }
+motion: { subject_motion: <>, background_motion: <>, pace: <> }
+style: { visual_style: <>, realism: <>, color_grade: <>, texture: <> }
+
+timeline:
+  first_frame: <>
+  beats:
+    - { start_s: 0, end_s: <s>, description: <> }
+  last_frame: <>
+
+priorities:                       # short phrases; each fact appears in ONE tier only
+  p1: [<subject + action>, <camera>, <setting>]
+  p2: [<lighting>, <style>]
+  p3: [<texture, secondary background detail>]
+
+negatives: [<must_not_include item>]
+
+complexity:
+  subjects: <n>
+  simultaneous_actions: <n>
+  camera_moves: <n>
+  beats: <n>
+  risk: <low | medium | high>
+  risk_reasons: [<reason>]
+
+conflicts: []                     # see video-shot conflict checks
+warnings: []
+
+provenance:
+  user: [<path>]
+  inferred: [<path>]
+  default: [<path>]
+  preset: { <kind/id>: [<path>] }
+  character: { <character-id>: [<path>] }

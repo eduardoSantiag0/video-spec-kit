@@ -1,0 +1,17 @@
+# Generated media — keep repositories light. Remove these lines to version outputs.
+outputs/
+*.mp4
+*.mov
+*.webm
+*.gif
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/

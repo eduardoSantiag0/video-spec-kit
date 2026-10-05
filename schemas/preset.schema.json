@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Preset",
+  "description": "presets/<kind>/<id>.yaml — a partial scene spec that a scene can reference and override.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["spec_version", "id", "kind", "description", "values"],
+  "properties": {
+    "spec_version": { "$ref": "common.schema.json#/$defs/specVersion" },
+    "id": { "$ref": "common.schema.json#/$defs/kebabId" },
+    "kind": { "enum": ["style", "camera", "lighting"] },
+    "description": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+    "values": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Only the sections allowed for this kind (see allOf below).",
+      "properties": {
+        "style": { "$ref": "common.schema.json#/$defs/style" },
+        "camera": { "$ref": "common.schema.json#/$defs/camera" },
+        "lighting": { "$ref": "common.schema.json#/$defs/lighting" },
+        "motion": { "$ref": "common.schema.json#/$defs/motion" }
+      }
+    },
+    "good_for": { "$ref": "common.schema.json#/$defs/stringList" },
+    "avoid_with": { "$ref": "common.schema.json#/$defs/stringList", "description": "Preset refs or situations that tend to conflict." }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "kind": { "const": "style" } } },
+      "then": { "properties": { "values": { "propertyNames": { "enum": ["style", "motion"] } } } }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "camera" } } },
+      "then": { "properties": { "values": { "propertyNames": { "enum": ["camera", "motion"] } } } }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "lighting" } } },
+      "then": { "properties": { "values": { "propertyNames": { "enum": ["lighting"] } } } }
+    }
+  ]
+}

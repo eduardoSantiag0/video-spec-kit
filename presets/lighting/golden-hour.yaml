@@ -1,0 +1,13 @@
+spec_version: 1
+id: golden-hour
+kind: lighting
+description: Low warm sun shortly before sunset; long shadows and glowing rim light.
+values:
+  lighting:
+    type: low warm sunlight near the horizon
+    direction: back and side light creating a rim on the subject
+    quality: soft, glowing
+    contrast: medium
+    color_temperature: warm
+good_for: [romance, nostalgia, landscapes, portraits]
+avoid_with: [night scenes, heavy rain]

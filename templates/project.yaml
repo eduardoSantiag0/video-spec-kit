@@ -1,0 +1,20 @@
+# TEMPLATE — projects/<id>/project.yaml
+# Schema: schemas/project.schema.json
+
+spec_version: 1
+id: <project-id>
+title: <title>
+logline: <one sentence about the whole video>
+created: "<YYYY-MM-DD>"           # quoted, or YAML reads it as a date
+
+defaults:                         # optional overrides of kit/defaults.yaml
+  format:
+    aspect_ratio: "<W:H>"
+    fps: <int>
+  presets:
+    style: <style-id>
+
+adapters: [wan, ltx]              # prompt adapters to compile for
+tool: comfyui                     # optional; enables comfyui-notes.md
+characters: [<character-id>]
+scenes: [scene-001]

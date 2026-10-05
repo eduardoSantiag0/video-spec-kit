@@ -1,0 +1,14 @@
+spec_version: 1
+id: commercial
+kind: style
+description: Polished advertising look — clean, bright, high detail on the product or hero subject.
+values:
+  style:
+    visual_style: polished commercial advertising look
+    realism: photorealistic
+    color_grade: clean, bright, slightly saturated, accurate skin tones
+    texture: very sharp, no grain
+  motion:
+    pace: moderate
+good_for: [products, food, fashion, brand spots]
+avoid_with: [cameras/handheld]

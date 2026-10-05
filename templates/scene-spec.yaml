@@ -1,0 +1,98 @@
+# TEMPLATE — scene-spec.yaml (source of truth for one scene version)
+# Schema: schemas/scene.schema.json · Rules: kit/conventions.md
+# Replace every <placeholder>. OMIT optional fields you have no value for —
+# never leave a placeholder or an empty value in a real spec.
+
+spec_version: 1
+id: scene-001                     # scene-NNN
+project: <project-id>
+version: v001
+title: <short human title>
+idea: "<the user's original idea, verbatim, original language>"
+idea_language: <BCP 47 code, e.g. en, pt-BR>
+intent: <one sentence: what the viewer should feel or understand>
+
+presets:                          # optional; ids under presets/<kind>/
+  style: <style-id>
+  camera: <camera-id>
+  lighting: <lighting-id>
+
+format:
+  duration_s: <seconds>
+  aspect_ratio: "<W:H>"
+  fps: <int>
+  input_mode: <text-to-video | image-to-video | first-last-frame>
+
+subjects:                         # one entry per visible subject that matters
+  - id: <local-id>
+    character_id: <character-id>  # OR `description:` for a one-off subject
+    action: <one clear, physically simple action>
+    expression: <optional>
+    position: <where in frame>
+
+environment:
+  location: <specific place>
+  era: <period>
+  time_of_day: <time>
+  weather: <weather>
+  atmosphere: <air, mood, particles, surfaces>
+  background_elements: [<element>, <element>]
+
+camera:                           # values from kit/vocabulary.md
+  shot_size: <shot size>
+  angle: <angle>
+  lens: <focal length / lens character>
+  movement: <one primary movement>
+  movement_detail: <direction, target, distance in plain words>
+  movement_speed: <very-slow | slow | moderate | fast>
+  framing: <composition>
+  depth_of_field: <shallow | moderate | deep>
+  focus_target: <what stays sharp>
+
+lighting:
+  type: <main light sources>
+  direction: <direction>
+  quality: <soft | hard | ...>
+  contrast: <low | medium | high>
+  color_temperature: <warm | neutral | cool | mixed>
+
+motion:
+  subject_motion: <how the subject moves>
+  background_motion: <what moves behind>
+  pace: <calm | moderate | energetic>
+
+timeline:                         # written by video-storyboard
+  first_frame: <exact description of frame 0>
+  beats:
+    - { start_s: 0, end_s: <s>, description: <what happens> }
+  last_frame: <exact description of the final frame>
+
+style:
+  visual_style: <look>
+  realism: <photorealistic | stylized-realistic | 3d-animation | 2d-animation | anime>
+  color_grade: <grade>
+  texture: <grain, sharpness>
+  references: [<textual reference>]
+
+references:
+  images:
+    - { path: <refs/file.png>, role: <first_frame | last_frame | character | style | environment> }
+
+audio:                            # only for adapters that generate sound
+  ambience: <ambient sound>
+
+continuity:
+  previous_scene: <scene-NNN>
+  next_scene: <scene-NNN>
+  must_remain_consistent: [<thing>]
+
+constraints:
+  must_include: [<element>]
+  must_not_include: [<element>]
+
+provenance:                       # every explicit leaf path in exactly one group
+  user: [<path>]
+  inferred: [<path>]
+  default: [<path>]
+
+notes: <optional free text>

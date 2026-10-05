@@ -1,0 +1,13 @@
+spec_version: 1
+id: dolly
+kind: camera
+description: Smooth slow push-in on rails toward the subject; builds focus and emotion.
+values:
+  camera:
+    movement: dolly-in
+    movement_detail: smooth, steady push toward the subject's face
+    movement_speed: slow
+    lens: 50mm
+    depth_of_field: shallow
+good_for: [reveals, emotional beats, product hero shots]
+avoid_with: [subjects moving fast across frame]

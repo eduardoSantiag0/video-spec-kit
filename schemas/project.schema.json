@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project",
+  "description": "projects/<id>/project.yaml — groups scenes and characters of one video.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["spec_version", "id", "title"],
+  "properties": {
+    "spec_version": { "$ref": "common.schema.json#/$defs/specVersion" },
+    "id": { "$ref": "common.schema.json#/$defs/kebabId" },
+    "title": { "$ref": "common.schema.json#/$defs/nonEmptyString" },
+    "logline": { "type": "string" },
+    "created": { "type": "string" },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Overrides kit/defaults.yaml for every scene in this project.",
+      "properties": {
+        "format": { "$ref": "common.schema.json#/$defs/format" },
+        "presets": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "style": { "$ref": "common.schema.json#/$defs/kebabId" },
+            "camera": { "$ref": "common.schema.json#/$defs/kebabId" },
+            "lighting": { "$ref": "common.schema.json#/$defs/kebabId" }
+          }
+        }
+      }
+    },
+    "adapters": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/kebabId" } },
+    "tool": { "type": "string", "description": "Where the user generates video, e.g. 'comfyui'. Enables comfyui-notes.md." },
+    "characters": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/kebabId" } },
+    "scenes": {
+      "type": "array",
+      "description": "Scenes in story order.",
+      "items": { "$ref": "common.schema.json#/$defs/sceneId" }
+    },
+    "notes": { "type": "string" }
+  }
+}

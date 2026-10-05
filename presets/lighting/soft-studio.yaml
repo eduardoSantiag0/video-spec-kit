@@ -1,0 +1,13 @@
+spec_version: 1
+id: soft-studio
+kind: lighting
+description: Large diffused key light with gentle fill; clean, flattering, even.
+values:
+  lighting:
+    type: large softbox key light with fill and subtle back light
+    direction: key at 45 degrees front-side, back light separating subject from background
+    quality: soft, diffused
+    contrast: low
+    color_temperature: neutral
+good_for: [products, interviews, portraits, commercials]
+avoid_with: [outdoor scenes, night exteriors]

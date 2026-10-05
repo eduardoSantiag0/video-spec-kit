@@ -1,0 +1,10 @@
+{
+  "yaml.schemas": {
+    "./schemas/scene.schema.json": ["**/scene-spec.yaml"],
+    "./schemas/shot.schema.json": ["**/shot-spec.yaml"],
+    "./schemas/generation-config.schema.json": ["**/generation-config.yaml"],
+    "./schemas/project.schema.json": ["projects/*/project.yaml", "examples/*/project.yaml"],
+    "./schemas/character.schema.json": ["projects/*/characters/*.yaml", "examples/*/characters/*.yaml"],
+    "./schemas/preset.schema.json": ["presets/*/*.yaml", "projects/*/presets/*/*.yaml"]
+  }
+}
