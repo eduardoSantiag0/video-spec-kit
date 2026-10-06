@@ -1,0 +1,55 @@
+# Skeleton for .video/session.yaml — the conversation's memory of the
+# current scene. Not meant for the user to edit by hand; the video / video
+# -screenplay / video-reset skills read and write it. Every field is
+# optional — never write a field the user never mentioned.
+#
+# Internal values are normalized to English; dialogue, proper names and
+# on-screen text stay exactly as given.
+
+scene:
+  subject:
+    type:                       # e.g. man, woman, creature
+    age:
+    appearance:
+      hair:
+      build:
+      # ...any other distinguishing trait the user mentioned
+    condition: []                # e.g. [bruised, exhausted]
+    clothing:
+      top:
+      bottom:
+      # ...
+    emotion: []                  # e.g. [startled, anxious]
+
+  action:
+    primary:
+    secondary:
+
+  environment:
+    interior_exterior:           # interior | exterior
+    location:
+    time_of_day:
+    weather:
+    background: []               # e.g. [soybean fields]
+
+  camera:
+    position:                    # e.g. inside car, behind subject
+    framing:                     # e.g. medium shot, close-up
+    angle:                       # e.g. eye level, low angle
+    movement:                    # e.g. static, handheld, tracking
+
+  lighting:
+    source:
+    direction:
+    contrast:
+    temperature:
+
+  style:
+    realism:                     # e.g. photorealistic, stylized
+    look:                        # e.g. cinematic
+    film_grain:
+
+meta:
+  language:                      # language the user is conversing in
+  last_model:                    # last adapter requested (wan | ltx | ...)
+  dialogue: []                   # verbatim lines kept for continuity only (video-screenplay)

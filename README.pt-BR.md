@@ -2,378 +2,218 @@
 
 🇺🇸 [Read in English](README.md)
 
-**Especifique antes de escrever o prompt.** Transforme uma ideia vaga de vídeo
-gerado por IA em uma especificação clara, estruturada e versionada — e compile
-essa especificação em prompts ajustados para cada modelo de vídeo.
+Video Spec Kit é um assistente conversacional para criação de prompts de
+vídeo com IA. Descreva sua cena, refine conversando e gere um prompt
+pronto para modelos de vídeo como Wan e LTX.
 
 ```
-$video Uma mulher anda de bicicleta por Tóquio à noite, sob chuva forte.
+$video
+
+> Quero um homem dirigindo numa estrada.
+
+> Como ele é e onde está a câmera?
+
+> 23 anos, machucado. Câmera fixa dentro do carro.
+
+> Quero que seja cinematográfico, 35mm.
+
+> Gera.
+
+<PROMPT FINAL>
 ```
 
-→ duas perguntas certeiras → uma scene spec, um storyboard, uma shot spec, um
-prompt para Wan, um prompt para LTX e configurações de geração reproduzíveis.
-Você gera o clipe na sua própria ferramenta, descreve o que viu, e o kit ajuda
-a corrigir **uma variável por vez**.
+> O Video Spec Kit **não** gera vídeo. É um conjunto de skills em Markdown
+> que rodam dentro do agente de código que você já usa (Claude Code, Codex,
+> Gemini CLI, OpenCode...). Sem backend, sem API, nada pago obrigatório.
 
-> O Video Spec Kit **não** gera vídeo. Ele é um conjunto de skills em Markdown,
-> schemas, templates e adapters de modelo que rodam dentro do agente de código
-> que você já usa. Sem backend, sem API, nada pago obrigatório.
-
-Já tem um roteiro? Cole um trecho do roteiro em vez de uma ideia —
-`$video-screenplay` transforma o trecho em shots e prompts sem inventar história.
+Já tem um roteiro? Cole um trecho em vez de uma ideia — `$video-screenplay`
+lê o trecho e entra na mesma conversa.
 
 ---
 
 ## Sumário
 
-- [O problema](#o-problema)
-- [A proposta](#a-proposta)
+- [Por quê](#por-quê)
 - [Filosofia](#filosofia)
 - [Instalação](#instalação)
 - [Início rápido](#início-rápido)
-- [Exemplo](#exemplo)
 - [A partir de um roteiro](#a-partir-de-um-roteiro)
-- [Fluxo de trabalho](#fluxo-de-trabalho)
+- [Skills](#skills)
+- [Como a memória funciona](#como-a-memória-funciona)
 - [Estrutura de arquivos](#estrutura-de-arquivos)
 - [Agentes suportados](#agentes-suportados)
 - [Modelos suportados](#modelos-suportados)
 - [Criar um adapter](#criar-um-adapter)
-- [Criar um preset](#criar-um-preset)
 - [Idiomas](#idiomas)
+- [Limitações](#limitações)
 - [Contribuindo](#contribuindo)
-- [Roadmap](#roadmap)
-- [Como este projeto foi feito](#como-este-projeto-foi-feito)
 - [Licença](#licença)
 
 ---
 
-## O problema
+## Por quê
 
-Escrever prompts para um modelo de vídeo costuma ser assim: escreve um
-parágrafo, gera (minutos de GPU), algo sai errado, reescreve o parágrafo
-inteiro, gera de novo. Depois de dez tentativas:
-
-- você não sabe qual mudança consertou o quê — nem o que quebrou;
-- o modelo preencheu ao acaso tudo que você não especificou (câmera, luz, figurino…);
-- o prompt que funcionou no Wan não funciona no LTX;
-- a personagem fica diferente em cada clipe;
-- você não consegue reproduzir o melhor resultado da semana passada porque não anotou a seed.
-
-## A proposta
-
-Tratar o vídeo como software construído a partir de uma especificação:
-
-1. **Esclarecer** só as decisões que mudam o vídeo por completo.
-2. **Especificar** a cena em YAML estruturado — a fonte da verdade.
-3. **Planejar** o tempo (storyboard) e o shot (câmera, lente, enquadramento, início/fim).
-4. **Compilar** a especificação em um prompt por modelo, com um *prompt adapter*.
-5. **Gerar** na sua ferramenta (ComfyUI, uma CLI, qualquer uma).
-6. **Revisar** o que você viu e receber um diagnóstico ligado aos campos da spec.
-7. **Iterar** com um experimento controlado: uma mudança, mesma seed, diff registrado.
-
-```
-IDEIA → CLARIFY → SCENE SPEC → STORYBOARD → SHOT SPEC → PROMPT DO MODELO
-      → (você gera) → REVIEW → ITERATE
-```
-
-Inspirado na filosofia do Spec Kit do GitHub (desenvolvimento orientado a
-especificação), aplicada a vídeo — sem depender dele.
+Escrever prompt para um modelo de vídeo costuma significar escrever um
+parágrafo gigante de uma vez, torcer pra cobrir tudo, e reescrever tudo de
+novo quando não cobre. Conversar em vez disso — algumas perguntas, algumas
+correções, depois "gera" — é mais parecido com como você de fato orientaria
+um diretor de fotografia.
 
 ## Filosofia
 
-1. Especifique antes de escrever o prompt.
-2. Separe a intenção da sintaxe do modelo.
-3. Esclareça só o que importa.
-4. Prefira especificações estruturadas.
-5. Prompts são artefatos compilados.
-6. Preserve a continuidade.
-7. Mude uma variável por vez.
-8. Registre os experimentos.
-9. Torne a geração reproduzível.
-10. Continue agnóstico em relação ao modelo.
-
-Cada princípio e como o kit o implementa: [docs/philosophy.md](docs/philosophy.md) (em inglês).
+1. Conversa antes do prompt.
+2. Pergunte só o que importa.
+3. Lembre do que o usuário já disse.
+4. Deixe o usuário refinar naturalmente.
+5. O estado estruturado fica nos bastidores.
+6. O resultado final é o prompt.
+7. Nunca obrigue o usuário a agir como programador.
+8. Mantenha a ferramenta simples.
 
 ## Instalação
 
 Você precisa de:
 
 - **git**, e
-- **um agente de código** capaz de ler e escrever arquivos numa pasta — Codex,
-  Claude Code, Gemini CLI, OpenCode ou qualquer outro (planos gratuitos e
-  modelos locais funcionam; veja [Agentes suportados](#agentes-suportados)).
+- **um agente de código** capaz de ler e escrever arquivos numa pasta —
+  Claude Code, Codex, Gemini CLI, OpenCode, ou qualquer outro que leia
+  Agent Skills.
 
 ```bash
 git clone https://github.com/<sua-org>/video-spec-kit.git
 cd video-spec-kit
 ```
 
-Só isso. Sem pacotes, sem build. Extras opcionais:
-
-- `pip install pyyaml jsonschema` → `python tools/validate.py` valida suas specs.
-- VS Code + extensão YAML → validação de schema em tempo real enquanto você
-  edita (configurada em `.vscode/settings.json`).
+Só isso. Sem pacotes, sem build, sem validador de schema para instalar.
 
 ## Início rápido
 
 1. Abra o agente **na pasta do repositório**:
 
    ```bash
-   codex        # ou: claude · gemini · opencode
+   claude        # ou: codex · gemini · opencode
    ```
 
-2. Descreva o seu vídeo:
+2. Descreva sua cena:
 
    | Agente | Digite |
    |--------|--------|
-   | Codex | `$video Uma samurai caminha por Tóquio sob chuva forte à noite.` |
-   | Claude Code, Gemini CLI | `/video Uma samurai caminha por Tóquio sob chuva forte à noite.` |
-   | OpenCode | `Use a skill video: uma samurai caminha por Tóquio sob chuva forte à noite.` |
-   | Qualquer outro agente | `Leia .agents/skills/video/SKILL.md e siga: uma samurai caminha…` |
+   | Claude Code, Gemini CLI | `/video Um homem dirigindo numa estrada rural ao entardecer.` |
+   | Codex, OpenCode | `$video Um homem dirigindo numa estrada rural ao entardecer.` |
+   | Qualquer outro agente | `Leia .agents/skills/video/SKILL.md e siga: um homem dirigindo…` |
 
-   Escreva em qualquer idioma — o agente faz as perguntas no seu idioma,
-   mantém as specs em inglês e escreve os prompts no seu idioma também
-   (a não ser que o modelo-alvo precise de um idioma específico).
+   Escreva em qualquer idioma — o agente faz as perguntas no seu idioma.
 
-3. Responda às (poucas) perguntas — ou adicione `--not-questions` ao comando
-   para pulá-las e deixar o kit decidir (todas as decisões são listadas no final). O agente grava seus arquivos em
-   `projects/<nome>/scenes/scene-001/v001/` e mostra os prompts.
+3. Responda a uma ou duas perguntas realmente necessárias. Ele guarda tudo
+   que você disser.
 
-4. Cole `prompts/wan.txt` (ou `ltx.txt`) na sua ferramenta de vídeo, use as
-   configurações de `generation-config.yaml` e anote a seed.
+4. Continue a conversa: adicione detalhes, corrija algo ("troca a camiseta
+   para cinza") ou peça ajuda criativa ("deixa mais tenso").
 
-5. Conte ao agente o que você viu:
-
-   ```
-   $video a câmera ficou ótima, mas o rosto dela muda no meio do vídeo
-   ```
-
-   Ele escreve um review, propõe uma única mudança e, quando você responde
-   "sim", cria a `v002` só com essa mudança.
-
-## Exemplo
-
-[`examples/tokyo-rain/`](examples/tokyo-rain/) é uma execução completa e
-versionada: ideia → clarify → spec → storyboard → shot → prompts Wan + LTX →
-generation config → review → experimento v002 → review.
-Comece pelo [walkthrough](examples/tokyo-rain/walkthrough.md).
-
-O mesmo shot compilado para dois modelos (a ideia deste exemplo foi escrita
-em inglês, então os prompts saem em inglês):
-
-**Wan** (`v001/prompts/wan.txt`, 134 palavras, começa pelo shot, usa negative prompt)
-
-> Medium tracking shot at eye level. A Japanese woman in her late 20s with a
-> short black bob, wearing a translucent yellow raincoat over a charcoal hoodie,
-> dark jeans and white sneakers, carrying a small red backpack, rides a bicycle
-> steadily through heavy rain, tired but determined, … The camera tracks
-> alongside her from the left at her speed, keeping her centered. …
-
-**LTX** (`v001/prompts/ltx.txt`, 174 palavras, começa pela ação, em ordem cronológica)
-
-> A woman rides a bicycle steadily through heavy rain along a narrow Tokyo side
-> street at night. She is a Japanese woman in her late 20s with a short black
-> bob, … Her legs pedal at a steady rhythm and her upper body leans slightly
-> forward against the rain. …
-
-E o experimento que corrigiu o rosto (`v002/iteration.md`):
-
-```diff
-  timeline.beats[1].description:
--   She glances toward the camera for a moment, then looks back at the road ahead …
-+   She keeps her eyes on the road ahead and leans slightly into the pedals …
-```
-
-Seed, modelo e configurações inalterados → o resultado pode ser atribuído a essa única linha.
+5. Diga "gera" / "gera para Wan" quando estiver pronto. Você recebe um
+   prompt finalizado, pronto para colar na sua ferramenta de vídeo.
 
 ## A partir de um roteiro
 
 ```
-$video-screenplay --duration 5
+$video-screenplay
 
 INT. COZINHA - NOITE
 
 Maria entra lentamente na cozinha.
 A luz da geladeira aberta ilumina seu rosto.
 Ela percebe um copo quebrado no chão.
-
-MARIA
-João?
-
-Um barulho vem do corredor.
-Maria congela.
 ```
 
-A skill:
+A skill lê a slugline, os personagens e a ação visível, grava na mesma
+memória que o `video` usa, e só pergunta o que o roteiro realmente não
+responde (geralmente câmera e visual). A partir daí é a mesma conversa —
+corrija, adicione, depois "gera".
 
-- interpreta sluglines (`INT.`/`EXT.`), local, horário, personagens, ações,
-  diálogos, parentéticos, transições e indicações de câmera;
-- separa o que é **visível** do que não é (pensamentos, memórias, sons);
-- mantém os beats na ordem do roteiro;
-- avisa que 5 beats visuais não cabem em um clipe de 5 segundos e oferece
-  **dividir**, **reduzir** ou **aumentar a duração**;
-- depois que você escolhe "dividir", grava três cenas comuns (entrada na luz da
-  geladeira · insert do copo quebrado · chamado, barulho e congelamento) com
-  prompts para Wan e LTX.
+Também disponível como `$video_from_screenwright` e `$video-from-screenplay`.
+Exemplo: [`examples/screenplay/`](examples/screenplay/).
 
-`"João?"` é preservado exatamente como está, mas não é falado pelo modelo; o
-barulho é apenas uma pista sonora (motiva a reação, nunca vira imagem); e
-ninguém aparece no corredor, porque João só é mencionado.
-
-Quando o roteiro traz uma informação interna — por exemplo, *"Carlos se lembra
-de tudo que o pai disse"* —, a skill não a transforma literalmente em imagem.
-Ela decide se isso já está evidente nos outros beats, se dá para mostrar só com
-atuação sutil (registrado como suposição) ou se precisa perguntar a você como
-representar: close e mudança de expressão, flashback, objeto ligado à memória
-ou nenhuma representação explícita.
-
-Não quer perguntas? Adicione `--not-questions` (ou `--no-questions`), cole o
-trecho e tudo é gerado; o relatório lista cada decisão que o kit tomou por você
-(por exemplo, "plano de shots → dividir", "visual → cinematográfico").
-
-```
-$video-screenplay --not-questions
-INT. COZINHA - NOITE
-Maria entra lentamente na cozinha.
-…
-```
-
-Nesse modo o kit escolhe sempre a opção que menos inventa: divide em shots
-quando não cabe, usa visual cinematográfico se o roteiro não define estilo,
-mostra informações internas só com atuação sutil (nunca flashback ou evento
-novo) e, em conflitos, dá prioridade ao roteiro. Tudo fica marcado como
-`inferred`, então você continua vendo o que não foi decisão sua. Só para se o
-trecho estiver vazio ou sem nada visível.
-
-Também funciona como `$video_from_screenwright` e `$video-from-screenplay`.
-
-> **Sobre o nome:** a skill foi pedida como `video_from_screenwright`, mas
-> *screenwright* não é um termo usado em inglês (roteiro é *screenplay*;
-> roteirista é *screenwriter*), e nomes de skill só aceitam letras minúsculas,
-> números e hífens. Por isso o nome canônico é `video-screenplay`, e
-> `video_from_screenwright` continua funcionando como alias.
-
-Guia: [docs/screenplay.md](docs/screenplay.md) (em inglês) · exemplos:
-[shot único](examples/screenplay-rooftop/walkthrough.md),
-[três shots, PT-BR](examples/screenplay-kitchen/walkthrough.md).
-
-## Fluxo de trabalho
-
-A maioria das pessoas só usa **`video`**. Ele roda o pipeline inteiro e
-encaminha o seu feedback. As outras skills dão controle fino:
+## Skills
 
 | Skill | Para quê |
 |-------|----------|
-| `video` | Orquestrador: ideia → arquivos; feedback → review → iteração. |
-| `video-clarify` | Encontra as ambiguidades que importam e pergunta só essas (CRÍTICAS vs OPCIONAIS). |
-| `video-character` | Personagens reutilizáveis, com trava de consistência e uma âncora de prompt repetida literalmente. |
-| `video-scene` | Escreve a `scene-spec.yaml`, a fonte da verdade, com proveniência em cada valor. |
-| `video-storyboard` | Primeiro frame, 1 a 3 beats com tempo, último frame. |
-| `video-shot` | Câmera, lente, movimento, enquadramento; aplica presets/personagens; detecta conflitos. |
-| `video-prompt` | Compila para um modelo: `$video-prompt wan`, `$video-prompt ltx`. |
-| `video-review` | Diagnostica uma geração a partir da sua descrição. |
-| `video-iterate` | Nova versão, uma mudança, mesma seed, diff registrado. |
-| `video-screenplay` | Trecho de roteiro → análise visual → divisão em shots → scene specs → prompts. Aliases: `video_from_screenwright`, `video-from-screenplay`. |
+| `video` | Entrada principal: ideia → conversa → prompt. |
+| `video-screenplay` | Trecho de roteiro → mesma conversa. Aliases: `video_from_screenwright`, `video-from-screenplay`. |
+| `video-reset` | Limpa a cena atual e começa uma nova. |
 
-Detalhes: [docs/workflow.md](docs/workflow.md) ·
-como os prompts são compilados: [docs/prompt-compiler.md](docs/prompt-compiler.md) (em inglês).
+Como o loop funciona por dentro: [docs/how-it-works.md](docs/how-it-works.md) (em inglês).
 
-### Você sempre sabe o que disse e o que o agente escolheu
+## Como a memória funciona
 
-Todo valor numa spec tem proveniência:
+Tudo que você disser sobre a cena fica em `.video/session.yaml` — sujeito,
+ação, ambiente, câmera, luz, estilo. Você nunca precisa abrir esse arquivo;
+não é algo para editar, é só a memória do agente sobre a conversa. Uma
+correção sempre substitui o valor antigo, nada é perguntado duas vezes, e
+`$video-reset` limpa tudo para uma cena nova.
 
 ```yaml
-provenance:
-  user:     [camera.movement, environment.weather, environment.time_of_day]
-  inferred: [camera.movement_detail, presets.lighting]
-  default:  [format.duration_s, format.aspect_ratio, format.fps]
+scene:
+  subject: { type: man, age: 23, condition: [bruised], clothing: { top: dark grey t-shirt } }
+  action: { primary: driving a car }
+  environment: { location: rural highway, weather: hot sunny day }
+  camera: { position: inside car, framing: medium shot, movement: static }
+  style: { realism: photorealistic, look: cinematic }
 ```
 
-`user` = você disse · `screenplay` = está escrito no seu trecho de roteiro ·
-`inferred` = deduzido do que você disse · `default` = padrão do kit que você nunca mencionou.
+Exemplo completo de conversa e o prompt que ela gerou:
+[`examples/conversation/`](examples/conversation/).
 
 ## Estrutura de arquivos
 
 ```
 video-spec-kit/
+├── README.md  README.pt-BR.md
 ├── AGENTS.md  CLAUDE.md  GEMINI.md     # entradas dos agentes (todas apontam para AGENTS.md)
-├── .agents/skills/<skill>/SKILL.md     # as 10 skills — fonte canônica
+├── .agents/skills/<skill>/SKILL.md     # as 3 skills — fonte canônica
 ├── .claude/{skills,commands}/  .gemini/commands/  # wrappers gerados + aliases
-├── kit/
-│   ├── conventions.md                  # layout, versionamento, proveniência, política de idiomas
-│   ├── defaults.yaml                   # defaults + regras de inferência
-│   └── vocabulary.md                   # termos controlados de câmera/estilo
-├── schemas/*.schema.json               # JSON Schema (draft 2020-12)
-├── templates/                          # esqueletos de todos os arquivos gerados
 ├── adapters/
-│   ├── wan/  adapter.md  prompt-template.md
-│   ├── ltx/  adapter.md  prompt-template.md
-│   └── _template/
-├── presets/{styles,cameras,lighting}/*.yaml
-├── projects/                           # SEU trabalho fica aqui
+│   ├── wan/adapter.md
+│   ├── ltx/adapter.md
+│   └── _template/adapter.md
+├── templates/
+│   └── session.yaml                    # o vocabulário de campos que .video/session.yaml usa
 ├── examples/
-│   ├── tokyo-rain/                     # ideia → v001 → review → v002
-│   ├── screenplay-rooftop/             # roteiro → um shot
-│   └── screenplay-kitchen/             # roteiro (PT-BR) → três shots
-├── docs/                               # filosofia, fluxo, compilador, roteiro, agentes, extensão, comfyui
-└── tools/                              # opcionais: validate.py, sync_agent_wrappers.py
+│   ├── conversation/                   # ideia → conversa → prompt
+│   └── screenplay/                     # roteiro → conversa → prompt
+├── docs/
+│   └── how-it-works.md                 # (em inglês)
+├── projects/                           # opcional: suas próprias anotações, se quiser
+└── tools/
+    └── sync_agent_wrappers.py          # regenera os wrappers gerados acima
 ```
 
-Como fica uma cena no seu projeto:
-
-```
-projects/<projeto>/
-  project.yaml
-  characters/<id>.yaml
-  screenplay/excerpt-001/      # só quando você parte de um roteiro
-    source-screenplay.md       # o trecho original, sem alterações
-    screenplay-analysis.yaml   # beats, diálogos, sons, info não visual, divisão em shots
-  scenes/scene-001/
-    history.md                 # uma linha por versão: mudança → resultado → veredito
-    v001/
-      scene-spec.yaml          # fonte da verdade
-      storyboard.md            # beats ao longo do tempo
-      shot-spec.yaml           # resolvida + checada contra conflitos (IR do compilador)
-      prompts/wan.txt  wan.negative.txt  ltx.txt  ltx.negative.txt
-      generation-config.yaml   # modelo, seed, tamanho, frames, steps, CFG, sampler…
-      comfyui-notes.md         # opcional
-      review.md                # depois que você gera
-    v002/ … + iteration.md     # o que mudou e por quê
-```
-
-Cada pasta de versão é autocontida e fica congelada depois do review, então
-todo resultado continua reproduzível. Regras: [kit/conventions.md](kit/conventions.md) (em inglês).
+Em tempo de execução, o único estado que o kit escreve é
+`.video/session.yaml` (fora do controle de versão — veja `.gitignore`), na
+pasta de onde você roda o agente.
 
 ## Agentes suportados
 
 | Agente | Onde encontra as skills | Como chamar |
 |--------|-------------------------|-------------|
-| Codex | `.agents/skills/` (nativo) | `$video …` |
 | Claude Code | `.claude/skills/` (wrappers gerados) | `/video …` |
 | Gemini CLI | `.agents/skills/` + `.gemini/commands/` | `/video …` |
-| OpenCode | `.agents/skills/` (nativo) | "use a skill video: …" |
+| Codex, OpenCode | `.agents/skills/` (nativo) | `$video …` |
 | Qualquer outro | `AGENTS.md` | "Leia `.agents/skills/video/SKILL.md` e siga: …" |
 
 As skills seguem o formato aberto Agent Skills (`SKILL.md` + frontmatter com
-`name`/`description`). Os wrappers são gerados por script, então cada skill
-existe em um único lugar. Mais detalhes, inclusive dicas para modelos locais:
-[docs/agent-support.md](docs/agent-support.md) (em inglês).
+`name`/`description`). Os wrappers são gerados, então cada skill existe em
+um único lugar.
 
 ## Modelos suportados
 
-| Adapter | Modelos | Estilo do prompt | Negative prompt | Observações |
-|---------|---------|------------------|-----------------|-------------|
-| [`wan`](adapters/wan/adapter.md) | Wan 2.1, Wan 2.2 (T2V, I2V, TI2V-5B, FLF2V) | Shot → sujeito → ação → cenário → câmera → luz → estilo; 80–150 palavras | Sim (lista oficial, adaptada) | 16 fps / 81 frames (4n+1) nos modelos 14B |
-| [`ltx`](adapters/ltx/adapter.md) | LTX-Video 0.9.x, 13B; LTX-2 | Ação primeiro, cronológico, literal; 100–180 palavras | Sim, com CFG > 1 | 24 fps, frames 8n+1, tamanhos ÷ 32 |
+| Adapter | Modelos | Observações |
+|---------|---------|-------------|
+| [`wan`](adapters/wan/adapter.md) | Wan 2.1 / 2.2 (T2V, I2V) | 80–150 palavras, negative prompt, 16 fps / 81 frames |
+| [`ltx`](adapters/ltx/adapter.md) | LTX-Video 0.9.x / 13B, LTX-2 | 100–180 palavras, negative prompt (CFG > 1), 24 fps |
 
-Os dois são modelos de pesos abertos que você pode rodar localmente (por
-exemplo, no ComfyUI). A spec não depende de modelo; adicionar um modelo
-significa adicionar uma pasta de adapter. Uso com ComfyUI:
-[docs/comfyui.md](docs/comfyui.md) (em inglês).
-
-> As configurações dos adapters (steps, CFG, shift…) são pontos de partida
-> documentados a partir da documentação pública dos modelos. O seu workflow
-> pode ser diferente — o kit registra o que você realmente usou.
+Os dois são modelos de pesos abertos que você pode rodar localmente (ex.:
+ComfyUI). Adicionar um modelo significa adicionar uma pasta de adapter — o
+kit continua agnóstico em relação ao modelo.
 
 ## Criar um adapter
 
@@ -381,84 +221,38 @@ significa adicionar uma pasta de adapter. Uso com ComfyUI:
 cp -r adapters/_template adapters/<id-do-modelo>
 ```
 
-Preencha o perfil no frontmatter (orçamento de palavras, ordem dos slots,
-negative prompt, regra de frames, tamanhos por proporção, defaults do sampler)
-e as seções de orientação (câmera, movimento, imagens de referência,
-consistência temporal, diálogo e som, duração, limitações). Depois rode
-`$video-prompt <id-do-modelo>`.
-Guia completo: [docs/extending.md](docs/extending.md#create-a-prompt-adapter) (em inglês).
-
-## Criar um preset
-
-```yaml
-# presets/lighting/blue-hour.yaml
-spec_version: 1
-id: blue-hour
-kind: lighting
-description: Deep blue twilight after sunset; city lights just turning on.
-values:
-  lighting:
-    type: residual skylight plus early street lights
-    contrast: medium
-    color_temperature: mixed
-```
-
-Use numa cena com `presets: { lighting: blue-hour }`; qualquer campo definido
-explicitamente na cena sobrescreve o preset.
-Guia completo: [docs/extending.md](docs/extending.md#create-a-preset) (em inglês).
+Preencha a orientação em linguagem simples (formato, negative prompt,
+câmera/movimento, diálogo e som, duração, limitações, idioma). Sem
+frontmatter, sem perfil de compilador para manter — a skill lê o arquivo
+diretamente.
 
 ## Idiomas
 
-- Você pode escrever ideias e roteiros em **qualquer idioma**.
-- O agente faz as perguntas e os relatórios **no seu idioma**.
-- As specs são normalizadas para **inglês** internamente, para ficarem
-  comparáveis entre projetos e colaboradores.
-- Os prompts saem **no mesmo idioma da sua ideia**, por padrão — se você
-  escreveu em português, `prompts/wan.txt` e `ltx.txt` saem em português.
-  Um adapter só força outro idioma quando o modelo-alvo realmente precisa
-  disso.
-- Nunca são traduzidos: a sua ideia original, o trecho de roteiro, nomes
-  próprios, falas e textos que precisam aparecer dentro da imagem.
+- Descreva sua cena em **qualquer idioma**; o agente pergunta e responde
+  nesse idioma.
+- A memória interna é normalizada para inglês para o agente raciocinar de
+  forma consistente — você nunca vê isso.
+- O prompt final sai por padrão em **inglês** (os modelos de vídeo são mais
+  bem documentados nele); peça outro idioma ("gera em português") e você o
+  recebe.
+- Nunca são traduzidos: nomes próprios, diálogos e textos que precisam
+  aparecer dentro da imagem.
 
-Regra completa: `kit/conventions.md` §7.
+## Limitações
+
+- Sem versionamento, controle de seed ou registro de reprodutibilidade —
+  se você precisar disso para suas próprias anotações, mantenha por conta própria.
+- A orientação dos adapters foi escrita a partir da documentação pública
+  dos modelos, não verificada contra gerações reais. Correções de quem
+  realmente roda esses modelos são bem-vindas.
+- Uma cena por vez. Um trecho de roteiro que precisa de vários shots é
+  tratado um de cada vez, não em lote.
 
 ## Contribuindo
 
-Adapters para mais modelos, presets, traduções da documentação e relatos de
-"o que realmente funcionou" são as contribuições mais valiosas.
-Veja [CONTRIBUTING.md](CONTRIBUTING.md) (em inglês).
-
-## Roadmap
-
-Planejado — e de propósito **fora** da V1:
-
-- [ ] Integração automática com ComfyUI (enviar uma versão para um ComfyUI em execução)
-- [ ] Importar/exportar workflows do ComfyUI a partir de/para `generation-config.yaml`
-- [ ] Avaliação multimodal automática dos clipes gerados
-- [ ] Comparação de frames entre versões
-- [ ] Integração direta com modelos de vídeo locais
-- [ ] Uma CLI própria (`vsk new`, `vsk compile`, `vsk diff`)
-- [ ] Instalador de pacote (adicionar o kit a um repositório existente)
-- [ ] Marketplace / registro de adapters
-- [ ] Presets da comunidade
-- [ ] Editor de timeline / história entre cenas
-- [ ] Geração multi-shot em um único clipe
-
-## Como este projeto foi feito
-
-Este projeto foi construído **principalmente com IA**. A arquitetura, as
-skills, os schemas, os adapters, os exemplos e a documentação foram gerados
-por um agente de código com IA (Claude, no Claude Code), a partir de
-especificações detalhadas escritas pelo mantenedor, que conduziu o design,
-definiu os requisitos e revisou o resultado. Os arquivos do kit foram checados
-com o validador incluído, mas as configurações de Wan/LTX não foram testadas em
-gerações reais — trate-as como pontos de partida documentados — e os reviews
-dos exemplos são fictícios. Correções de quem roda esses modelos são
-especialmente bem-vindas.
+Adapters para mais modelos e relatos de "o que realmente funcionou" são as
+contribuições mais valiosas. Veja [CONTRIBUTING.md](CONTRIBUTING.md) (em inglês).
 
 ## Licença
 
-[Apache License 2.0](LICENSE). Escolhida em vez da MIT porque é igualmente
-permissiva (uso comercial, modificação, redistribuição) e acrescenta uma
-concessão explícita de patentes e termos claros para contribuições — útil para
-um projeto que espera receber adapters e presets de muitas pessoas.
+[Apache License 2.0](LICENSE).

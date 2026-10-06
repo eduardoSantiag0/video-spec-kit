@@ -1,8 +1,8 @@
 # AGENTS.md — instructions for coding agents
 
-This repository is **Video Spec Kit**: Markdown skills, schemas, templates and
-prompt adapters that turn a video idea into a structured spec and
-model-specific prompts. It does not generate video.
+This repository is **Video Spec Kit**: a conversational assistant, built as
+Markdown skills, for turning a video idea into a polished prompt for AI
+video models. It does not generate video.
 
 ## Skills
 
@@ -10,16 +10,9 @@ Canonical skills live in `.agents/skills/<name>/SKILL.md`:
 
 | Skill | Use |
 |-------|-----|
-| `video` | **Main entry point.** Idea → clarify → spec → storyboard → shot → prompts; routes feedback to review/iterate. |
-| `video-clarify` | Ask only the questions that change the video. |
-| `video-character` | Reusable character with a verbatim prompt anchor. |
-| `video-scene` | Write `scene-spec.yaml` (source of truth) with provenance. |
-| `video-storyboard` | First frame, timed beats, last frame. |
-| `video-shot` | Shot design, resolution, conflict check → `shot-spec.yaml`. |
-| `video-prompt` | Compile prompts per adapter (`wan`, `ltx`) + `generation-config.yaml`. |
-| `video-review` | Diagnose a generated clip from the user's description. |
-| `video-iterate` | New version with one controlled change, recorded diff. |
-| `video-screenplay` | Screenplay excerpt → analysis → shot breakdown → standard scene specs → prompts. |
+| `video` | **Main entry point.** Chat about an idea, get asked only what matters, refine in plain language, ask to generate when ready. |
+| `video-screenplay` | Paste a screenplay excerpt; it extracts the visual scene into the same conversation, then behaves like `video`. |
+| `video-reset` | Clear the current scene's memory and start a new one. |
 
 When the user types `$video`, `/video`, or describes a video idea, read
 `.agents/skills/video/SKILL.md` and follow it. Same for the other skills by
@@ -38,22 +31,34 @@ Treat these exactly like the skill they point to (same file, same arguments):
 A pasted screenplay excerpt (sluglines such as `INT.`/`EXT.`, CHARACTER cues)
 also goes to `video-screenplay`.
 
+## How it works
+
+The whole kit is one idea: **conversation before prompting**. There is no
+versioning, no experiment log, no seed tracking, no formal review step —
+just a running memory of the current scene (`.video/session.yaml`, written
+and read by the skills, never meant for the user to edit) that accumulates
+facts, gets corrected in plain language, and gets compiled into a prompt on
+request. Details: `docs/how-it-works.md`.
+
 ## Rules for every agent
 
-- Shared rules: `kit/conventions.md` (layout, versioning, provenance, language
-  policy, resolution order). Read it before writing any spec file.
-- User work goes in `projects/`. Do not modify `kit/`, `schemas/`,
-  `templates/`, `adapters/`, `presets/`, `examples/`, `docs/` or the skill
-  folders during user work.
+- Converse in the user's language; normalize `.video/session.yaml` to
+  English internally; default the final prompt to English unless the user
+  asks for another language.
+- Ask only questions that would meaningfully change the result — never a
+  fixed checklist, never more than 1–3 per turn, never about something
+  already stated.
+- Never invent a narratively important detail (who's there, what happens);
+  small non-critical visual filler is fine when needed to make a prompt concrete.
+- A correction replaces the old value; never hold two contradictory facts.
 - Never call paid APIs or services. Never generate or download video.
-- Converse in the user's language; write spec files in English; prompts in the
-  language of the user's idea by default (an adapter may pin a different
-  language only when the target model needs it — `kit/conventions.md` §7).
+- Don't modify `adapters/`, `templates/`, `docs/` or the skill folders during
+  user work. Anything the user wants to keep (notes, reference images) is
+  theirs to put under `projects/` if they want one — the kit doesn't require it.
 
 ## Maintaining the kit
 
 - Edit skills only in `.agents/skills/`. Then run
   `python tools/sync_agent_wrappers.py` to regenerate `.claude/skills/` and
   `.gemini/commands/`.
-- Optional validation: `python tools/validate.py` (needs `pyyaml`, `jsonschema`).
 - See `CONTRIBUTING.md`.

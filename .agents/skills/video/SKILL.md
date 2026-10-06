@@ -1,173 +1,204 @@
 ---
 name: video
-description: Main entry point of Video Spec Kit. Turns a video idea into a versioned scene spec, storyboard, shot spec and model-specific prompts (Wan, LTX) by asking only the questions that matter. Also routes feedback about a generated clip to review and iteration. Use when the user describes a video or scene idea, types $video or /video, or reports how a generated clip turned out. Does not generate video.
+description: Main entry point of Video Spec Kit. A conversational assistant that turns a video idea into a polished prompt for AI video models (Wan, LTX) by chatting naturally — asking only what matters, remembering what you said, and letting you refine the scene in plain language until you ask for the prompt. Use when the user describes a video or scene idea, types $video or /video, or wants to change or finish a scene already in progress.
 ---
 
-# video — orchestrator
+# video — conversational prompt assistant
 
 ## Purpose
 
-Take a user from a vague idea to ready-to-use files with one command:
-idea → clarify → scene spec → storyboard → shot spec → prompts. Then, after the
-user generates the clip in their own tool, route their feedback to review and
-iteration. Most users only ever call this skill; the `video-*` skills it calls
-exist for fine control.
+Be a prompt designer / director of photography the user talks to. Take an
+idea, ask a couple of sharp questions, remember every fact the user gives,
+let them correct or add to it in plain language, and produce a clean final
+prompt when asked — in one continuous conversation. No versions, no files
+the user has to understand, no formal review process.
 
 ## When to use
 
-- The user describes a video, shot or scene they want ("a samurai walks through Tokyo...").
-- The user types `$video`, `/video`, or asks to "spec"/"plan" an AI video.
-- The user reports how a generated clip turned out ("the face changed...").
-- The user asks to continue a project ("next scene", "now she arrives home").
+- The user describes a video, shot or scene ("a man driving down a rural
+  road...").
+- The user types `$video` / `/video`.
+- The user is mid-conversation about a scene and adds, corrects, or asks to
+  change something ("change his shirt to dark grey", "the camera stays
+  still").
+- The user asks to generate/finish the prompt ("gera", "generate the prompt",
+  "finish", "gera para Wan").
 
 Do **not** use for: generating video, editing video files, or questions about
-the kit itself (answer those directly from `README.md`).
+the kit itself (answer those from `README.md`).
 
-## Inputs
+A screenplay excerpt (sluglines like `INT.`/`EXT.`, CHARACTER cues) goes to
+`.agents/skills/video-screenplay/SKILL.md` instead — it extracts the scene
+into the same state described below and then continues this same flow.
 
-| Input            | Required | Source |
-|------------------|----------|--------|
-| User message     | yes      | Text after `$video` / `/video`, or the conversation |
-| `--no-questions` / `--not-questions` | no | Ask nothing; pass the mode to `video-clarify` / `video-screenplay` and list every auto-decision in the report |
-| Existing project | no       | `projects/*/project.yaml` |
-| Kit files        | yes      | `kit/conventions.md`, `kit/defaults.yaml`, `kit/vocabulary.md` |
+## State: `.video/session.yaml`
 
-Read `kit/conventions.md` before writing any file. It defines layout, naming,
-versioning, provenance and value resolution for every step below.
+All accumulated facts about the current scene live in `.video/session.yaml`
+(create the `.video/` folder if missing). This file is memory, not a
+deliverable — never show it to the user as the output, and never ask them to
+edit it. Read it at the start of every turn; write it back after every turn
+that changes something.
 
-## Workflow
+Shape (flexible — only include what the user actually gave you; see
+`templates/session.yaml` for the full field vocabulary):
 
-### Step 0 — Route the request
+```yaml
+scene:
+  subject: { type, age, appearance: {...}, condition: [...], clothing: {...}, emotion: [...] }
+  action: { primary, secondary }
+  environment: { location, weather, time_of_day, background: [...] }
+  camera: { position, framing, angle, movement }
+  lighting: { source, direction, contrast, temperature }
+  style: { realism, look, film_grain }
+meta:
+  language: pt-BR          # language the user is talking in
+  last_model: wan           # last adapter requested, if any
+```
 
-Classify the user message, first match wins:
+Internal notes are English, even mid-conversation in another language — it
+is working memory, not something the user reads.
 
-| Message looks like                                        | Route |
-|-----------------------------------------------------------|-------|
-| Empty / only "$video"                                      | Ask: "Describe the video in one or two sentences — who/what, doing what, where." Show one example. Stop. |
-| Feedback on a generated clip (mentions result, face, camera "was", "looks", "changed", "artifacts") **and** a scene exists | Go to **Feedback flow**. |
-| "next scene", "continue", references an earlier scene      | **New scene flow** in the same project with `continuity` set. |
-| Screenplay excerpt (sluglines `INT.`/`EXT.`, CHARACTER cues with dialogue, or several numbered/ordered actions) | Run `.agents/skills/video-screenplay/SKILL.md`. |
-| "status", "where are we", "what's next"                    | Summarize each scene: current version, run status, last review verdict. Stop. |
-| Anything describing visual content                         | **New scene flow**. |
+## The loop
 
-### New scene flow
+Every message is handled the same way; there are no separate steps the user
+has to invoke:
 
-1. **Project.** Pick the project:
-   - the project already used in this conversation, else
-   - a project whose id, title or character is named in the message, else
-   - create `projects/<id>/` with `project.yaml` from `templates/project.yaml`.
-     Derive `<id>` from 2–3 key nouns of the idea (`tokyo-rain`). Do not ask.
-   Next scene id = next free `scene-NNN`. Version = `v001`.
-2. **Clarify.** Run `.agents/skills/video-clarify/SKILL.md` (in no-questions
-   mode when the flag is present). Result: a clarification record
-   (path → value → source). At most two question rounds; zero in no-questions mode.
-3. **Characters.** For each subject that needs a stable identity, run
-   `.agents/skills/video-character/SKILL.md` (criteria are in that skill).
-4. **Scene spec.** Run `.agents/skills/video-scene/SKILL.md` →
-   `scenes/<scene-id>/v001/scene-spec.yaml`.
-5. **Storyboard.** Run `.agents/skills/video-storyboard/SKILL.md` → adds
-   `timeline` to the spec and writes `storyboard.md`.
-6. **Shot.** Run `.agents/skills/video-shot/SKILL.md` → `shot-spec.yaml`.
-   If it reports a **blocking conflict**, ask the user to resolve it (one
-   question per conflict, with options), update the spec, and re-run this step.
-7. **Prompts.** Run `.agents/skills/video-prompt/SKILL.md` for every adapter in
-   `project.yaml → adapters` (default: `kit/defaults.yaml → adapters`).
-8. **History.** Create `scenes/<scene-id>/history.md` from
-   `templates/history.md` with the `v001` row (Result: `pending`).
-9. **Update project.** Append the scene id to `project.yaml → scenes` and any new
-   character ids to `characters`.
-10. **Report** using the format in *Output*. Stop and wait for the user.
+1. **Understand** — read the message for new facts, corrections, or a
+   generate request.
+2. **Remember** — merge new facts into `.video/session.yaml`. A correction
+   **replaces** the old value for that field; never keep both. Prefer the
+   most recent explicit statement.
+3. **Clarify** — if something that would meaningfully change the result is
+   still missing or ambiguous, ask about it (rules below). Otherwise don't.
+4. **Respond** — acknowledge what changed, ask the question(s) if any, or
+   produce the final prompt if asked.
 
-### Feedback flow
+### Merging facts (natural language)
 
-1. Identify the scene (the one in this conversation, or the most recently
-   modified one) and its current version. If ambiguous, ask once which scene.
-2. Run `.agents/skills/video-review/SKILL.md` with the user's words.
-3. Show the review summary and the recommended next experiment, then ask:
-   "Create v00N with this change? (yes / choose another suggestion / describe your own)".
-4. On confirmation, run `.agents/skills/video-iterate/SKILL.md`.
+Accept plain language, not commands. Map what the user says onto the closest
+field in the state and overwrite it:
+
+| User says (any language) | Effect |
+|---|---|
+| "Troca o cabelo dele para loiro" | `subject.appearance.hair = "blond"` |
+| "A câmera não acompanha mais ele, quero ela parada" | `camera.movement = "static"` |
+| "Na verdade é fim de tarde" | `environment.time_of_day = "late afternoon"` (replaces previous value) |
+| "Troca o campo de milho por soja" | `environment.background` item updated |
+
+Rules:
+- Never hold two contradictory values for the same fact — the new one wins.
+- Never re-ask something already answered.
+- Don't invent story-important details (what he's doing, who's there, a plot
+  point) — only small, non-critical visual filler when it's needed to make
+  the prompt concrete (e.g. a plausible hair color if none was given and the
+  user asks you to generate anyway).
+- If the user gives several facts in one message, capture all of them before
+  responding.
+
+### Clarifying (not a form)
+
+Ask only when the missing/ambiguous information would meaningfully change
+the clip, there's a real ambiguity, or the user asks for help developing the
+scene. 1–3 questions per turn, conversational, never a checklist:
+
+Good: "A câmera fica fixa dentro do carro ou acompanha o personagem? E você
+quer uma aparência mais realista ou estilizada?"
+
+Bad: asking about duration, lens, fps, resolution, camera, style, lighting,
+color, aspect ratio, all at once.
+
+If the user already gave several of these in one sentence ("plano médio,
+câmera fixa dentro do carro, altura dos olhos"), do not ask about framing,
+movement or angle again — they're answered.
+
+Once the essentials exist (who/what, roughly where, roughly how the camera
+sits), stop asking and let the user either refine or ask you to generate.
+
+### Creative collaboration
+
+When the user gives a creative direction instead of a concrete fact ("deixa
+essa cena mais tensa", "quero algo mais sombrio"), don't just guess — offer 2–3
+concrete levers tied to camera, performance, or lighting, and apply the one
+they pick (or a sensible default if they just say "go ahead"):
+
+> "Podemos aumentar a tensão por câmera, atuação ou luz. Quer: 1) manter a
+> câmera fixa e deixar a atuação mais nervosa; 2) aproximar o enquadramento;
+> 3) deixar a luz mais dura?"
+
+### Generating the prompt
+
+Triggers (any language, any phrasing close to): "gera", "gera o prompt",
+"finaliza", "generate", "generate the prompt", "gera para Wan/LTX", "finish".
+
+1. Pick the adapter: the one named in the request, else `meta.last_model`,
+   else ask only if the user seems to care about the target model — otherwise
+   write a generic high-quality prompt and mention it works for either.
+   Read `adapters/<id>/adapter.md` for that model's order of information,
+   word budget, and negative-prompt approach.
+2. Compose **one natural paragraph** (plus a short negative prompt if the
+   adapter uses one) from everything in `.video/session.yaml`:
+   - describe what's visually there — subject appearance, action, environment —
+     before camera and style;
+   - include camera (position/framing/angle/movement), lighting, and style;
+     preserve the order of actions/events if more than one was described;
+   - resolve overlaps so nothing is said twice or contradicts itself;
+   - no YAML, no field names, no bullet list — plain descriptive prose a
+     video model can take directly;
+   - target the adapter's word budget; follow its section order and negative
+     list guidance.
+3. Default output language: English (the prompt is for a video model).
+   Exception: the user explicitly asks for another language ("gera em
+   português") — then honor it. Never translate proper names, exact
+   diegetic dialogue, on-screen text, or brand names/signage, regardless of
+   output language.
+4. Show the prompt (and negative prompt, if any) in chat. That's the
+   deliverable — don't also dump the YAML state at the user.
+5. Update `meta.last_model` if an adapter was specified.
 
 ## Rules
 
-1. Never generate, download or upload video. Never call a paid API or service.
-2. Ask questions only through `video-clarify`. Never ask about something the
-   user already stated. Zero questions is a valid outcome.
-3. Write user work only under `projects/`. Never modify kit files (list in
-   `kit/conventions.md` §8).
-4. Language policy (`kit/conventions.md` §7): accept any input language,
-   preserve intent, converse in the user's language, normalize specs to
-   English, and write prompts in the same language as the user's idea by
-   default (an adapter can pin a different `prompt.language` only when its
-   target model needs one).
-5. Never present a value the agent chose as if the user chose it. Every value
-   carries provenance.
-6. Run sub-steps in order; do not skip storyboard or shot — prompts compile
-   from `shot-spec.yaml` only.
-7. Keep the chat output short: the files hold the detail.
-
-## Output
-
-Files (new scene): `project.yaml` (new or updated), `characters/<id>.yaml`
-(when created), and in `scenes/<scene-id>/`: `history.md`,
-`v001/scene-spec.yaml`, `v001/storyboard.md`, `v001/shot-spec.yaml`,
-`v001/prompts/<adapter>.txt` (+ `.negative.txt`), `v001/generation-config.yaml`,
-and `v001/comfyui-notes.md` when `project.yaml → tool: comfyui`.
-
-Chat report (new scene), written in the user's language (labels below are
-shown in English for reference), in this order:
-
-```
-Scene ready: projects/<project>/scenes/<scene-id>/v001/
-
-Files
-- scene-spec.yaml — source of truth
-- storyboard.md — beats over time
-- shot-spec.yaml — resolved shot (N warnings)
-- prompts/wan.txt, prompts/ltx.txt (+ negatives)
-- generation-config.yaml — recommended settings
-
-You decided: <3–6 short items tagged user>
-I assumed:   <3–6 most impactful inferred/default items> — say "change <item>" to adjust
-Decided automatically: <only with --no-questions: every auto-decision>
-
-Warnings: <from shot-spec, or "none">
-
-Next
-1. Paste prompts/<adapter>.txt into your tool (see comfyui-notes.md if present).
-2. Use the settings in generation-config.yaml and note the seed.
-3. Tell me what you see: "$video the face changes and the camera is too fast".
-```
+1. Never generate, download or upload video. Never call a paid API or
+   service.
+2. Converse in the user's language; keep `.video/session.yaml` normalized in
+   English; default the final prompt to English unless asked otherwise.
+3. Never present a value you chose as if the user chose it — when you fill a
+   small gap, say so briefly ("assumi cabelo castanho curto, pode trocar").
+4. Don't touch `kit/`-style infrastructure files (there isn't any left to
+   touch) — just `.video/session.yaml` and, if the user asks, files under
+   `projects/`.
+5. Keep responses short: a line acknowledging the update, the question(s) if
+   any, or the prompt if asked for.
 
 ## Failure handling
 
 | Situation | Action |
-|-----------|--------|
-| Idea has no subject or no action ("something cool") | Ask one question for subject + action; offer 3 concrete example ideas. |
-| Idea needs several shots ("she enters, sits, then the car explodes") | Explain one scene = one continuous clip. Propose a split into scenes; spec the first one now and list the rest in `project.yaml → notes`. |
-| User asks for an adapter that does not exist | List `adapters/*/` ids; offer to draft one from `adapters/_template/` (only if the user asks). |
-| User says "just go" / "use defaults" | Skip questions; use recommended options; tag them `inferred` or `default`. |
-| User wants to change something after the report | If the version is a draft (no review, no generated seed), edit `scene-spec.yaml` in place, move the path to `user` provenance, re-run steps 5–7. Otherwise run `video-iterate`. |
-| A sub-skill fails (missing file, invalid value) | Stop, report which file and field, propose the fix. Do not continue with a broken spec. |
+|---|---|
+| First message has no subject or action ("quero algo legal") | Ask one question for subject + action, with 2–3 example ideas. |
+| User asks to generate before anything concrete exists | Say what's missing in one line and ask the minimum needed to produce something real. |
+| Requested adapter has no `adapters/<id>/` folder | List the available ones (`wan`, `ltx`) and offer a generic prompt instead. |
+| User wants to start a new, unrelated scene | Suggest `$video-reset` first so old facts don't bleed into the new scene. |
+| `.video/session.yaml` is missing or empty | Treat this as a brand-new scene; create it as soon as the first fact arrives. |
 
-## Examples
+## Example
 
-**New idea, two questions**
-
-> User: `$video A woman rides a bicycle through Tokyo at night during heavy rain.`
+> User: `$video Quero uma cena de um homem dirigindo em uma estrada rural.`
 >
-> Agent (via video-clarify): asks about look (photoreal / anime / ...) and
-> camera viewpoint (alongside / behind / in front / static wide), lists
-> assumptions (5 s, 16:9, reusable character in a yellow raincoat...).
+> Agent: "Como é esse homem? E onde está a câmera?"
 >
-> User: `1 photoreal cinematic, 2 alongside. She should look tired but determined.`
+> User: `Ele tem 23 anos, está machucado e assustado. O carro está andando. A câmera está fixa dentro do carro.`
 >
-> Agent: writes all files, prints the report.
-
-Full walkthrough: `examples/tokyo-rain/walkthrough.md`.
-
-**Feedback**
-
-> User: `$video the camera is great but her face changes halfway and the hands flicker`
+> Agent: saves all of that, confirms briefly, maybe asks one more thing (look/style) if still open.
 >
-> Agent: runs video-review on the current version, recommends one change,
-> asks to create v002, runs video-iterate on "yes".
+> User: `O dia está quente e ensolarado, visual cinematográfico e realista.`
+>
+> Agent: saves it.
+>
+> User: `Troca a camiseta dele para cinza escuro.`
+>
+> Agent: updates just that field.
+>
+> User: `Gera para Wan.`
+>
+> Agent: outputs the final Wan prompt built from everything accumulated.
+
+Full example with the final prompt text: `examples/conversation/`.

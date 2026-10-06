@@ -1,3 +1,6 @@
+# Conversation memory — local scratch state, not a deliverable.
+.video/
+
 # Generated media — keep repositories light. Remove these lines to version outputs.
 outputs/
 *.mp4

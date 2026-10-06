@@ -1,9 +1,0 @@
-spec_version: 1
-id: tokyo-rain
-title: Tokyo Rain
-logline: A tired rider crosses a neon-lit Tokyo in a storm.
-created: "2026-10-01"
-adapters: [wan, ltx]
-tool: comfyui
-characters: [mika]
-scenes: [scene-001]

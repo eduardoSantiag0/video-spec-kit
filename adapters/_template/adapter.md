@@ -1,50 +1,39 @@
----
-# Copy this folder to adapters/<your-model-id>/ and fill every field.
-# See docs/extending.md → "Create a prompt adapter".
-id: <model-id>
-name: <Model name (publisher)>
-written_against: [<model versions you actually tested>]
-weights: <open / closed; license; how it runs locally>
-prompt:
-  form: <single paragraph | tag list | structured sections>
-  language: auto          # 'auto' follows the idea's language (kit/conventions.md §7); pin a fixed code only if this model needs one
-  target_words: [<min>, <max>]
-  max_words: <hard limit>
-  section_order: [<slot>, <slot>]
-negative_prompt: <true | false>
-supports:
-  image_to_video: <true | false>
-  first_last_frame: <true | false>
-  audio: <true | false>
-frame_rule: "<constraint on num_frames / width / height>"
-profiles:
-  - id: <profile-id>
-    model: <checkpoint name>
-    fps: <int>
-    num_frames: <int>
-    sizes: { "16:9": [<w>, <h>], "9:16": [<w>, <h>] }
-    steps: <int>
-    cfg: <number>
-    sampler: <sampler>
-    scheduler: <scheduler>
-    params: {}
-default_profile: <profile-id>
----
-
 # <Model> adapter
 
-Every section below is required. Write rules an agent can apply
-deterministically; cite the model's official guidance when you have it.
+Copy this folder to `adapters/<your-model-id>/` and fill in each section
+below as plain guidance the `video` skill can follow when composing a
+prompt from the accumulated scene facts. No frontmatter, no compiler
+profile — just tell the agent how this model likes to be prompted.
+
+## Shape
+
+What order the information should come in, roughly how long the prompt
+should be (a word range), and whether it's one paragraph, a tag list, or
+structured sections.
+
+## Negative prompt
+
+Whether this model uses one, and what belongs in it (a short quality list is
+typical). Say when it stops mattering (e.g. at CFG = 1 on distilled checkpoints).
+
+## Camera & motion
+
+How this model likes camera movement and motion described — any verbs or
+phrasing it responds well or badly to.
+
+## Dialogue and sound
+
+Whether this model can generate audio. If not, say so plainly: dialogue and
+sound effects must never appear as words in the prompt, only as visible
+action/reaction.
+
+## Duration and limitations
+
+Any hard constraints (frame-count rule, fps, size divisibility) and known
+weak spots (hands, text, fast motion, exact counts...).
 
 ## Language
-## Order of information
-## Level of detail
-## Negative prompt
-## Camera
-## Motion
-## Reference images (image-to-video / first-last-frame)
-## Temporal consistency
-## Dialogue and sound
-## Duration
-## Known limitations
-## Example
+
+Which languages this model is well-documented for, and whether the kit's
+default (compile in the user's language, or English if unspecified) needs a
+caveat here.
