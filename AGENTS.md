@@ -47,7 +47,8 @@ also goes to `video-screenplay`.
   folders during user work.
 - Never call paid APIs or services. Never generate or download video.
 - Converse in the user's language; write spec files in English; prompts in the
-  language the adapter specifies.
+  language of the user's idea by default (an adapter may pin a different
+  language only when the target model needs it — `kit/conventions.md` §7).
 
 ## Maintaining the kit
 

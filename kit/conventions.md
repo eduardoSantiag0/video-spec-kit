@@ -163,9 +163,19 @@ This policy is mandatory for every skill.
    - dialogue text (`audio.dialogue[].text`) and proper names as written;
    - text that must appear inside the image (signs, notes, screens) — never
      translate it unless the user asks.
-5. **Prompts in English** unless the adapter's profile sets another
-   `prompt.language` because the target model explicitly benefits from it.
-   The adapter, not the user's language, decides the prompt language.
+5. **Prompts follow the idea's language by default.** Compile
+   `prompts/<adapter>.txt` (and its negative prompt) in `idea_language` —
+   the same language the user wrote the idea in — carried from
+   `scene-spec.yaml` into `shot-spec.yaml` and read by `video-prompt`.
+   An adapter profile may pin `prompt.language` to a fixed code instead of
+   `auto` only when the target model is documented to need a specific
+   language; that pin, not the user's language, then wins. Quality-list
+   terms in the negative prompt (e.g. "blurry, watermark") are translated
+   sense-for-sense into the compiled language; a term kept in English because
+   it has no faithful equivalent gets a short gloss, same as idea terms
+   under rule 2. If the compiled language is one the adapter's guidance
+   flags as weaker for that model, `video-prompt` says so once in its report
+   but still compiles in that language.
 
 ## 8. Files the agent must not modify during user work
 

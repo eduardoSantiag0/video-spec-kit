@@ -131,8 +131,9 @@ That's it. No packages, no build step. Optional extras:
    | OpenCode | `Use the video skill: a samurai walks through Tokyo during heavy rain at night.` |
    | Any other agent | `Read .agents/skills/video/SKILL.md and follow it: a samurai walks…` |
 
-   Write in any language — the agent asks its questions in your language and
-   keeps the specs and prompts in English.
+   Write in any language — the agent asks its questions in your language,
+   keeps the specs in English, and writes the prompts in your language too
+   (unless the target model needs a specific one).
 
 3. Answer the (few) questions — or add `--not-questions` to the command to skip
    them and let the kit decide (every decision is listed afterwards). The agent writes your files to
@@ -372,8 +373,10 @@ Full guide: [docs/extending.md](docs/extending.md#create-a-preset).
 - The agent asks questions and reports **in your language**.
 - Specs are normalized to **English** internally, so they stay comparable
   across projects and contributors.
-- Prompts are in **English** unless a model's adapter sets another language
-  because the model benefits from it.
+- Prompts come out **in the same language as your idea**, by default — write
+  in Portuguese and `prompts/wan.txt`/`ltx.txt` come out in Portuguese too.
+  An adapter only forces a different language when its target model actually
+  needs one.
 - Never translated: your original idea, the screenplay excerpt, proper names,
   dialogue, and text that must appear inside the image.
 

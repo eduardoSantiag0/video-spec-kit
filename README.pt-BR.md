@@ -131,8 +131,9 @@ Só isso. Sem pacotes, sem build. Extras opcionais:
    | OpenCode | `Use a skill video: uma samurai caminha por Tóquio sob chuva forte à noite.` |
    | Qualquer outro agente | `Leia .agents/skills/video/SKILL.md e siga: uma samurai caminha…` |
 
-   Escreva em qualquer idioma — o agente faz as perguntas no seu idioma e
-   mantém as specs e os prompts em inglês.
+   Escreva em qualquer idioma — o agente faz as perguntas no seu idioma,
+   mantém as specs em inglês e escreve os prompts no seu idioma também
+   (a não ser que o modelo-alvo precise de um idioma específico).
 
 3. Responda às (poucas) perguntas — ou adicione `--not-questions` ao comando
    para pulá-las e deixar o kit decidir (todas as decisões são listadas no final). O agente grava seus arquivos em
@@ -157,7 +158,8 @@ versionada: ideia → clarify → spec → storyboard → shot → prompts Wan +
 generation config → review → experimento v002 → review.
 Comece pelo [walkthrough](examples/tokyo-rain/walkthrough.md).
 
-O mesmo shot compilado para dois modelos (os prompts ficam em inglês):
+O mesmo shot compilado para dois modelos (a ideia deste exemplo foi escrita
+em inglês, então os prompts saem em inglês):
 
 **Wan** (`v001/prompts/wan.txt`, 134 palavras, começa pelo shot, usa negative prompt)
 
@@ -411,8 +413,10 @@ Guia completo: [docs/extending.md](docs/extending.md#create-a-preset) (em inglê
 - O agente faz as perguntas e os relatórios **no seu idioma**.
 - As specs são normalizadas para **inglês** internamente, para ficarem
   comparáveis entre projetos e colaboradores.
-- Os prompts saem em **inglês**, a não ser que o adapter do modelo indique
-  outro idioma porque o modelo se beneficia dele.
+- Os prompts saem **no mesmo idioma da sua ideia**, por padrão — se você
+  escreveu em português, `prompts/wan.txt` e `ltx.txt` saem em português.
+  Um adapter só força outro idioma quando o modelo-alvo realmente precisa
+  disso.
 - Nunca são traduzidos: a sua ideia original, o trecho de roteiro, nomes
   próprios, falas e textos que precisam aparecer dentro da imagem.
 

@@ -3,8 +3,12 @@
 A Portuguese excerpt with six beats, dialogue and a sound cue, requested
 as a 5-second generation. Shows the duration warning, the split into shots,
 dialogue preservation, sound handling, and fidelity safeguards. The
-conversation is in Portuguese (the user's language); the files are in English
-except for the verbatim source text.
+conversation is in Portuguese (the user's language); `scene-spec.yaml`,
+`shot-spec.yaml` and the other structured files are normalized to English
+(`kit/conventions.md` §6), but `prompts/wan.txt` and `prompts/ltx.txt` (and
+their negative prompts) are compiled in Portuguese — the same language as
+the excerpt — because prompts now follow `idea_language` by default
+(`kit/conventions.md` §7 rule 5).
 
 ## 1. Input
 

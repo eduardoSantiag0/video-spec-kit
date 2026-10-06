@@ -96,8 +96,9 @@ Classify the user message, first match wins:
    `kit/conventions.md` §8).
 4. Language policy (`kit/conventions.md` §7): accept any input language,
    preserve intent, converse in the user's language, normalize specs to
-   English, and write prompts in the language the adapter's profile sets
-   (English for Wan and LTX).
+   English, and write prompts in the same language as the user's idea by
+   default (an adapter can pin a different `prompt.language` only when its
+   target model needs one).
 5. Never present a value the agent chose as if the user chose it. Every value
    carries provenance.
 6. Run sub-steps in order; do not skip storyboard or shot — prompts compile

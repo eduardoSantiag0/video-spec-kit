@@ -31,6 +31,11 @@
     "version": {
       "$ref": "common.schema.json#/$defs/version"
     },
+    "idea_language": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$",
+      "description": "Copied from scene-spec.yaml → idea_language. Default prompt language unless the adapter profile pins one (kit/conventions.md § 7)."
+    },
     "derived_from": {
       "type": "object",
       "additionalProperties": false,

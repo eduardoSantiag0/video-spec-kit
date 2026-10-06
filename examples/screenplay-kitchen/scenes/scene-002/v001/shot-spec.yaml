@@ -1,6 +1,7 @@
 spec_version: 1
 scene_id: scene-002
 version: v001
+idea_language: pt-BR
 derived_from:
   scene_spec: scene-spec.yaml
   presets: [style/cinematic]

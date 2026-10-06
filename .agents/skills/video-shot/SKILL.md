@@ -113,7 +113,8 @@ Assign short phrases to tiers. **Each fact appears in one tier only.**
 ### 6. Write
 
 `shot-spec.yaml` from the template; `negatives` = `constraints.must_not_include`.
-Copy `source` and add `derived_from.screenplay_analysis` for screenplay-derived scenes.
+Copy `source`, `idea_language` and add `derived_from.screenplay_analysis` for
+screenplay-derived scenes.
 Dialogue text and sound cues stay in `audio`; they never become P1–P3 phrases
 unless `audio.generate: true`.
 Validate against `schemas/shot.schema.json` (required fields, enums, no

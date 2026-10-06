@@ -5,6 +5,7 @@
 spec_version: 1
 scene_id: scene-001
 version: v001
+idea_language: <copied from scene-spec.yaml, e.g. en, pt-BR>
 derived_from:
   scene_spec: scene-spec.yaml
   characters: [<../../../characters/<id>.yaml>]

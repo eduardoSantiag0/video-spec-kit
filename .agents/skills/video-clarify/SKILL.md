@@ -71,9 +71,11 @@ Go through the dimension table below. For each dimension, mark it:
 
 - 0 CRITICAL → ask nothing. Return the record. (`video` shows the assumptions
   in its final report.)
-- 1–4 CRITICAL → one message with the questions, then the assumptions list.
-- More than 4 CRITICAL → the idea is too vague. Ask only for subject + action
-  + setting in one question, then re-run this workflow on the answer.
+- 1 or more CRITICAL → one message with every CRITICAL question (no upper
+  limit — ask as many as the idea actually needs), then the assumptions list.
+  If the idea is so vague that the list would be unreadable, group the
+  closely related ones into a single question with combined options rather
+  than dropping any.
 
 ### 4. Ask (single message)
 
@@ -105,10 +107,12 @@ city at once).
 - An answer that changes an assumption → that path becomes `user`.
 - Unanswered questions → recommended option, tagged `inferred`, and mention it.
 
-### 6. Round 2 (rare)
+### 6. Further rounds
 
 Only if an answer creates a new CRITICAL gap (e.g. "make it part of my other
-project" → continuity unclear). Never more than two rounds in total.
+project" → continuity unclear). Keep asking additional rounds for as long as
+each answer keeps introducing new CRITICAL gaps; stop as soon as a round
+introduces none. There is no fixed cap on the number of rounds.
 
 ## No-questions mode
 
@@ -137,7 +141,9 @@ error with an example, not asked as a question.
 1. Never ask about a STATED dimension, even to "confirm".
 2. Never turn an OPTIONAL dimension into a question. It goes in the
    assumptions list.
-3. Max 4 questions per round, max 2 rounds.
+3. No cap on the number of questions — ask every CRITICAL dimension, however
+   many that is. Further rounds only while an answer keeps introducing a new
+   CRITICAL gap (see §6).
 4. Questions are about the video, not about the files or the kit.
 5. No yes/no questions when options are possible.
 6. Do not ask about technical generation settings (steps, CFG, seed).

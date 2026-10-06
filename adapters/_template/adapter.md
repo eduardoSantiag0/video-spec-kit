@@ -7,7 +7,7 @@ written_against: [<model versions you actually tested>]
 weights: <open / closed; license; how it runs locally>
 prompt:
   form: <single paragraph | tag list | structured sections>
-  language: en
+  language: auto          # 'auto' follows the idea's language (kit/conventions.md §7); pin a fixed code only if this model needs one
   target_words: [<min>, <max>]
   max_words: <hard limit>
   section_order: [<slot>, <slot>]
@@ -36,6 +36,7 @@ default_profile: <profile-id>
 Every section below is required. Write rules an agent can apply
 deterministically; cite the model's official guidance when you have it.
 
+## Language
 ## Order of information
 ## Level of detail
 ## Negative prompt

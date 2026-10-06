@@ -25,6 +25,15 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ### Changed
 - `audio.dialogue` is now a list of `{character, text, ...}` lines (was a string).
+- `video-clarify` no longer caps the number of CRITICAL questions per round or
+  the number of rounds; it asks every CRITICAL dimension and keeps asking
+  further rounds for as long as an answer keeps introducing a new one.
+- Prompts now default to the idea's language (`idea_language`) instead of
+  always English. `shot-spec.yaml` carries `idea_language` from
+  `scene-spec.yaml`; an adapter profile can still pin a fixed
+  `prompt.language` when its target model needs one (`wan` and `ltx` default
+  to `auto`). Negative-prompt quality terms are translated sense-for-sense
+  into the compiled language. See `kit/conventions.md` §7 rule 5.
 
 ## [0.1.0] — 2026-10-05
 

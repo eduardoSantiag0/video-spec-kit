@@ -6,7 +6,7 @@ written_against: [Wan 2.1, Wan 2.2]
 weights: open (Apache-2.0); runs locally (ComfyUI, diffusers, official repo)
 prompt:
   form: single paragraph, present tense
-  language: en            # Chinese also works; the kit writes English
+  language: auto          # follows the idea's language (kit/conventions.md §7); well-supported: en, zh
   target_words: [80, 150]
   max_words: 200
   section_order: [shot, subject, action, environment, camera_movement, lighting, style, texture]
@@ -56,6 +56,13 @@ default_profile: wan2.2-t2v-a14b
 
 How to turn a resolved `shot-spec.yaml` into a Wan prompt. Read together with
 `prompt-template.md` in this folder.
+
+## Language
+
+Well-supported: English and Chinese (the checkpoints were trained on captions
+in both). The kit compiles in the idea's language by default
+(`kit/conventions.md` §7); in any other language, `video-prompt` still
+compiles the prompt but warns once that adherence may be weaker.
 
 ## Order of information
 

@@ -47,7 +47,12 @@ Prompt Compiler stages handled here: (6) select adapter profile, (7) render,
    - Use `image-to-video` variant when `format.input_mode` is not
      `text-to-video`.
    - Insert each subject `anchor` verbatim.
-   - Use the language in the profile's `prompt.language` (`kit/conventions.md` §7).
+   - **Prompt language**: if the profile's `prompt.language` is a fixed code
+     (not `auto`), use it. Otherwise use `shot-spec.yaml → idea_language`
+     (default `en` if absent) — write the whole prompt, including every
+     slot, in that language (`kit/conventions.md` §7). If that language is
+     one the adapter's guidance flags as weaker for this model, compile in
+     it anyway and add one warning line in the report (step 11).
 6. **Lint** (fix, then re-check; max 3 passes):
 
    | Check | Fix |
@@ -70,6 +75,9 @@ Prompt Compiler stages handled here: (6) select adapter profile, (7) render,
 7. **Negative prompt** (only if the adapter has `negative_prompt: true` and the
    profile `cfg` > 1): `shot-spec → negatives` + the adapter's quality list,
    minus items that contradict the spec. Comma-separated, no duplicates.
+   Translate the quality-list terms sense-for-sense into the prompt's
+   resolved language; keep a term in English only when it has no faithful
+   equivalent (short gloss, as in `kit/conventions.md` §7 rule 2).
 8. **Write** `prompts/<adapter>.txt` (and `prompts/<adapter>.negative.txt`) —
    plain text, one paragraph, no markdown, trailing newline.
 9. **generation-config.yaml.** Create from the template or update the run for
@@ -89,8 +97,8 @@ Prompt Compiler stages handled here: (6) select adapter profile, (7) render,
 10. **ComfyUI notes.** If `project.yaml → tool: comfyui` or the user asks,
     write `comfyui-notes.md` from the template (one section per run).
 11. **Report** in the user's language: the prompt text (so the user can copy
-    it), word count, dropped P3 items, warnings from the shot-spec, files
-    written.
+    it), word count, dropped P3 items, warnings from the shot-spec, the
+    language-support warning from step 5 if any, files written.
 
 ## Rules
 

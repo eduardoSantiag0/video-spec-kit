@@ -6,7 +6,7 @@ written_against: [LTX-Video 0.9.x (2B / 13B), LTX-2]
 weights: open weights; runs locally (ComfyUI, diffusers, official repo) — check the license of the checkpoint you use
 prompt:
   form: single chronological paragraph, present tense, literal
-  language: en
+  language: auto           # follows the idea's language (kit/conventions.md §7); well-supported: en
   target_words: [100, 180]
   max_words: 200
   section_order: [action, subject, movement_detail, environment, camera, lighting, events, audio]
@@ -45,6 +45,13 @@ default_profile: ltxv-13b-dev
 
 How to turn a resolved `shot-spec.yaml` into an LTX-Video prompt. Read together
 with `prompt-template.md` in this folder.
+
+## Language
+
+Well-supported: English (the documented training/caption language). The kit
+compiles in the idea's language by default (`kit/conventions.md` §7); in any
+other language, `video-prompt` still compiles the prompt but warns once that
+adherence may be weaker.
 
 ## Order of information
 

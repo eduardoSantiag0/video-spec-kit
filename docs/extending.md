@@ -25,7 +25,7 @@ folder with two files.
 
    | Field | Meaning |
    |-------|---------|
-   | `prompt.form`, `language` | Paragraph / tags / sections; prompt language (English unless the model explicitly benefits from another). |
+   | `prompt.form`, `language` | Paragraph / tags / sections; prompt language. Use `auto` to follow the idea's language (the default — see `kit/conventions.md` §7); pin a fixed code only if this model needs a specific language. |
    | `prompt.target_words`, `max_words` | Word budget. P3 is dropped first when over. |
    | `prompt.section_order` | Order of slots in the prompt. |
    | `negative_prompt` | Whether the model uses one. |
@@ -34,10 +34,12 @@ folder with two files.
    | `profiles[]` | Checkpoints with fps, frames, sizes per aspect ratio, steps, CFG, sampler, scheduler, extra `params`. |
    | `default_profile` | Profile used when the user names none. |
 
-3. Write the **guidance** sections in `adapter.md`. All are required: order of
-   information, level of detail, negative prompt, camera, motion, reference
-   images, temporal consistency, dialogue and sound, duration, known
-   limitations, example.
+3. Write the **guidance** sections in `adapter.md`. All are required:
+   language, order of information, level of detail, negative prompt, camera,
+   motion, reference images, temporal consistency, dialogue and sound,
+   duration, known limitations, example. The language section states which
+   languages the model is well-supported in, used by `video-prompt` to decide
+   whether to add a weaker-adherence warning when compiling in another one.
    Write rules an agent can apply literally ("Put the camera in its own
    sentence after the environment"), not impressions ("the model is good with
    cameras").

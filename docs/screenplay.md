@@ -118,8 +118,10 @@ Each shot becomes a normal scene (`scenes/scene-NNN/`) with a `source` block
 
 ## Language
 
-Any language in, questions in the user's language, specs in English, prompts in
-English. Proper names, dialogue and on-screen text stay exactly as written.
+Any language in, questions in the user's language, specs in English, prompts
+in the same language as the excerpt/idea by default (an adapter can pin a
+different language only when its model needs one). Proper names, dialogue
+and on-screen text stay exactly as written.
 
 ## Examples
 
